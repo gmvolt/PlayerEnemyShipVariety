@@ -15,6 +15,10 @@ import entity.EnemyShipFormation;
 import entity.Entity;
 import entity.Ship;
 
+//Item, ItemPoll 클래스 인포트
+import entity.Item;
+import entity.ItemPool;
+
 /**
  * Implements the game screen, where the action happens.
  * 
@@ -56,6 +60,10 @@ public class GameScreen extends Screen {
 	private Cooldown screenFinishedCooldown;
 	/** Set of all bullets fired by on screen ships. */
 	private Set<Bullet> bullets;
+
+	//Item이 스크린에 생성하기 위해 작성
+	private Set<Item> items;
+
 	/** Current score. */
 	private int score;
 	/** Player lives left. */
@@ -120,6 +128,11 @@ public class GameScreen extends Screen {
 				.getCooldown(BONUS_SHIP_EXPLOSION);
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<Bullet>();
+
+		//-------------------------------------------------
+		//아이템 해시 테이블 초기화를 위해 작성
+		this.items = new HashSet<Item>();
+		//-------------------------------------------------
 
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
@@ -197,6 +210,8 @@ public class GameScreen extends Screen {
 
 		manageCollisions();
 		cleanBullets();
+		//cleanItem() 매서드를 불러오기 위해 작성
+		cleanItems();
 		draw();
 
 		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
@@ -228,6 +243,11 @@ public class GameScreen extends Screen {
 		for (Bullet bullet : this.bullets)
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
 					bullet.getPositionY());
+
+		// drawManager가 graphics 파일에서 가져온 정사각형 모양 아이템 그래픽 데이터 스크린에 그리기
+		for (Item item : this.items) {
+			drawManager.drawEntity(item, item.getPositionX(), item.getPositionY());
+		}
 
 		// Interface.
 		drawManager.drawScore(this, this.score);
@@ -265,6 +285,20 @@ public class GameScreen extends Screen {
 		BulletPool.recycle(recyclable);
 	}
 
+
+
+	private void cleanItems() {
+		Set<Item> recyclable = new HashSet<Item>();
+		for (Item item : this.items) {
+			item.update();
+			if (item.getPositionY() > this.height) {
+				recyclable.add(item);
+			}
+		}
+		this.items.removeAll(recyclable);
+		ItemPool.recycle(recyclable);
+	}
+
 	/**
 	 * Manages collisions between bullets and ships.
 	 */
@@ -289,6 +323,13 @@ public class GameScreen extends Screen {
 						this.shipsDestroyed++;
 						this.enemyShipFormation.destroy(enemyShip);
 						recyclable.add(bullet);
+
+						//enemyShip이 아군 Bullit과 닿으면 Item이 30% 확률로 Item이 나옴
+						if(Math.random() < 0.3) {
+							// 아이템 생성
+							Item item = ItemPool.getBullet(enemyShip.getPositionX(), enemyShip.getPositionY(), 5, 1);
+							this.items.add(item);
+						}
 					}
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
@@ -298,10 +339,29 @@ public class GameScreen extends Screen {
 					this.enemyShipSpecial.destroy();
 					this.enemyShipSpecialExplosionCooldown.reset();
 					recyclable.add(bullet);
+
+					//enemyShipSpecial이 아군 Bullit과 닿으면 Item이 나옴
+					Item item = ItemPool.getBullet(enemyShipSpecial.getPositionX(), enemyShipSpecial.getPositionY(), 5, 2);
+					this.items.add(item); //
 				}
 			}
 		this.bullets.removeAll(recyclable);
 		BulletPool.recycle(recyclable);
+
+		//Item 해시 함수작성
+		Set<Item> recyclableItems = new HashSet<Item>();
+
+		//Item과 Ship이 닿으면 "아이템 먹음"이라는 로그가 나옴
+		for (Item item : this.items) {
+			if (checkCollision(item, this.ship)) {
+				recyclableItems.add(item);
+				this.logger.info("아이템 먹음");
+			}
+		}
+
+		//재활용된 Item 삭제
+		this.items.removeAll(recyclableItems);
+		ItemPool.recycle(recyclableItems);
 	}
 
 	/**
