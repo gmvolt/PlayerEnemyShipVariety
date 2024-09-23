@@ -75,7 +75,11 @@ public final class DrawManager {
 		/** Bonus ship. */
 		EnemyShipSpecial,
 		/** Destroyed enemy ship. */
-		Explosion
+		Explosion,
+		//-------------------------------------------------
+		//Item을 스크린에 그리기 위해 작성
+		Item
+		//-------------------------------------------------
 	};
 
 	/**
@@ -101,6 +105,15 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipC2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
 			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
+			//Item의 그래픽을 graphics 파일에서 가져오기 위해 작성
+			// res\graphics 파일에도 Item 그래픽을 쓰기 위해
+			//11111
+			//10001
+			//10001
+			//10001
+			//11111 의 정사각형 박스모양 그래픽 데이터 작성
+			spriteMap.put(SpriteType.Item, new boolean[5][5]);
+
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
