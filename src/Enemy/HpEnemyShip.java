@@ -14,11 +14,11 @@ public class HpEnemyShip {
      * 		   if hp is 1, return white
      */
     public static Color determineColor(int hp) {
-        if (hp == 2)
-            return new Color(0xFFEB3B);
-        else if (hp == 3)
-            return new Color(0xFFA500);
-        return new Color(0xFFFFFF);
+        return switch (hp % 10) {
+            case 2 -> new Color(0xFFEB3B);
+            case 3 -> new Color(0xFFA500);
+            default -> new Color(0xFFFFFF);
+        };
     }
 
     /**
