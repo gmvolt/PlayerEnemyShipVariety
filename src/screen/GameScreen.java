@@ -386,7 +386,7 @@ public class GameScreen extends Screen {
 		*
 		* Checks if the intended number of waves for this level was destroyed
 		* **/
-		if ((getRemainingEnemies() == 0 || this.lives == 0)
+		if ((getRemainingEnemies() == 0 || this.lives <= 0) // Edited by team Enemy
 		&& !this.levelFinished
 		&& waveCounter == this.gameSettings.getWavesNumber()) {
 			this.levelFinished = true;
@@ -603,7 +603,7 @@ public class GameScreen extends Screen {
 								+ " lives remaining.");
 
 						// Sound Operator
-						if (this.lives == 0){
+						if (this.lives <= 0){ // Edited by team Enemy
 							sm = SoundManager.getInstance();
 							sm.playShipDieSounds();
 						}
