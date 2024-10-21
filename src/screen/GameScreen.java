@@ -389,7 +389,7 @@ public class GameScreen extends Screen {
 		if ((getRemainingEnemies() == 0 || this.lives <= 0) // Edited by team Enemy
 		&& !this.levelFinished
 		&& waveCounter == this.gameSettings.getWavesNumber()) {
-			this.lives = 0;
+			this.lives = Math.max(this.lives,0);
 			this.levelFinished = true;
 			this.screenFinishedCooldown.reset();
 		}
