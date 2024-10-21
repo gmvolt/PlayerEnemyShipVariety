@@ -190,15 +190,18 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			for (int i = 0; i < this.nShipsHigh; i++) {
 				double angle = 2* PI * i / this.nShipsHigh;
 
+
+
 				if (i / (float) this.nShipsHigh < PROPORTION_C)
-					if (shipCount == (nShipsHigh*1)+1 ||shipCount == (nShipsHigh*3)+1) //Edited by Enemy
-						spriteType = SpriteType.ExplosiveEnemyShip1;
-					else if (i / (float) this.nShipsHigh < PROPORTION_C)
-						spriteType = SpriteType.EnemyShipC1;
-					else if (i / (float) this.nShipsHigh < PROPORTION_B + PROPORTION_C)
-						spriteType = SpriteType.EnemyShipB1;
-					else
-						spriteType = SpriteType.EnemyShipA1;
+					spriteType = SpriteType.EnemyShipC1;
+				else if (i / (float) this.nShipsHigh < PROPORTION_B + PROPORTION_C)
+					spriteType = SpriteType.EnemyShipB1;
+				else
+					spriteType = SpriteType.EnemyShipA1;
+
+				if (shipCount == (nShipsHigh*1)+1 ||shipCount == (nShipsHigh*3)+1) //Edited by Enemy
+					spriteType = SpriteType.ExplosiveEnemyShip1;
+
 				if(isCircle){
 					x = (int) round(RADIUS * cos(angle) + positionX + ( SEPARATION_DISTANCE_CIRCLE* this.enemyShips.indexOf(column)));
 					y = (int) (RADIUS * sin(angle)) + positionY;}
