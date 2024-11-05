@@ -9,35 +9,34 @@ import engine.DrawManager.SpriteType;
 import java.awt.*;
 
 /**
- * Implements a Boss's parts.
+ * Implements the part of the Boss.
  */
 public class BossParts extends Entity {
-	/** EnemyShip's health point */
+	/** Part of the Boss' health point */
 	private int hp;
 
 	/** Cooldown between sprite changes. */
 	private Cooldown animationCooldown;
-	/** Checks if the ship has been hit by a bullet. */
+	/** Checks if the part of the Boss has been hit by a bullet. */
 	private boolean isDestroyed;
-	/** Values of the ship, in points, when destroyed. */
+	/** Values of the part of the Boss, in points, when destroyed. */
 	private int pointValue;
 
 	private static SoundManager sm;
 
-	// 쓸지 안 쓸지 모름
 	/** Speed reduction or increase multiplier (1.0 means normal speed). */
 	private double speedMultiplier;
 	private double defaultSpeedMultiplier;
 
 	/**
-	 * Constructor, establishes the ship's properties.
+	 * Constructor, establishes the part's properties.
 	 *
 	 * @param positionX
 	 *            Initial position of the ship in the X axis.
 	 * @param positionY
 	 *            Initial position of the ship in the Y axis.
 	 * @param spriteType
-	 *            Sprite type, image corresponding to the ship.
+	 *            Sprite type, image corresponding to the part of the Boss.
 	 */
 	public BossParts(final int positionX, final int positionY,
 					 final SpriteType spriteType, int hp) {
@@ -55,7 +54,7 @@ public class BossParts extends Entity {
 	}
 
 	/**
-	 * Getter for the score bonus if this ship is destroyed.
+	 * Getter for the score bonus if this part is destroyed.
 	 *
 	 * @return Value of the ship.
 	 */
@@ -64,7 +63,7 @@ public class BossParts extends Entity {
 	}
 
 	/**
-	 * Moves the ship the specified distance.
+	 * Moves the part of the Boss in the specified distance.
 	 *
 	 * @param distanceX
 	 *            Distance to move in the X axis.
@@ -97,12 +96,10 @@ public class BossParts extends Entity {
 	}
 
 	/**
-	 * Determine the color of the ship according to hp
+	 * Determine the color of the part of the Boss according to hp
 	 * @param hp
-	 * 			The ship's hp
-	 * @return if hp is 2, return yellow
-	 * 		   if hp is 3, return orange
-	 * 		   if hp is 1, return white
+	 * 			The Boss' hp
+	 * @return color of Boss
 	 */
 	public static Color determineColor(int hp) {
 		return switch (hp) {
@@ -119,7 +116,7 @@ public class BossParts extends Entity {
 	public final void hit() {
 		this.hp -= 1;
 
-		// 피격 시 잠시 빨갛게 깜빡인다든가 하는 애니메이션 필요할 듯. -김유준-
+		// Maybe we should add blinking effect here when the Boss get hit.
 
 		if (hp <= 0) {
 			destroy();
@@ -127,7 +124,7 @@ public class BossParts extends Entity {
 	}
 
 	/**
-	 * Destroys the ship, causing an explosion.
+	 * Destroys the part of the Boss, causing an explosion.
 	 */
 	public final void destroy() {
 		this.isDestroyed = true;
@@ -135,28 +132,28 @@ public class BossParts extends Entity {
 	}
 
 	/**
-	 * Checks if the ship has been destroyed.
+	 * Checks if the part of the Boss has been destroyed.
 	 *
-	 * @return True if the ship has been destroyed.
+	 * @return True if the part of the Boss has been destroyed.
 	 */
 	public final boolean isDestroyed() {
 		return this.isDestroyed;
 	}
 
 	/**
-	 * Getter for the Hp of this Enemy ship.
+	 * Getter for the Hp of this part of the Boss.
 	 *
-	 * @return Hp of the ship.
+	 * @return Hp of the part of the Boss.
 	 */
 	public final int getHp() {
 		return this.hp;
 	}
 
 	/**
-	 * Setter for the Hp of the Enemy ship.
+	 * Setter for the Hp of the part of the Boss.
 	 *
 	 * @param hp
-	 * 			New hp of the Enemy ship.
+	 * 			New hp of the part of the Boss.
 	 */
 	public void setHp(int hp) {
 		this.hp = hp;
