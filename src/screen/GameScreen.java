@@ -17,6 +17,7 @@ import entity.Bullet;
 import entity.BulletPool;
 import entity.EnemyShip;
 import entity.EnemyShipFormation;
+// import entity.BossEnemyShipFormation; ////////////////////////////////////////////////////////////////////////////////////// Activate or change this line - Gyeongju
 import entity.Entity;
 import entity.Obstacle;
 import entity.Ship;
@@ -57,6 +58,8 @@ public class GameScreen extends Screen {
 	private int level;
 	/** Formation of enemy ships. */
 	private EnemyShipFormation enemyShipFormation;
+	/** Formation of boss enemy ships. */
+	// private BossEnemyShipFormation bossEnemyShipFormation; //////////////////////////////////////////////////////////////////////Activate or change this line - Gyeongju
 	/** Player's ship. */
 	private Ship ship;
 	public Ship player2;
@@ -215,7 +218,13 @@ public class GameScreen extends Screen {
 		/** initialize background **/
 		drawManager.loadBackground(this.level);
 
-		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
+		// Use BossEnemyShipFormation on specific levels (2, 4, 6)
+		if (this.gameSettings.isBossLevel()) {
+			enemyShipFormation = new EnemyShipFormation(this.gameSettings); ////////////////////////////////////Change this to BossEnemyShipFormation - Gyeongju
+		} else {
+			enemyShipFormation = new EnemyShipFormation(this.gameSettings);
+		}
+
 		enemyShipFormation.setScoreManager(this.scoreManager);//add by team Enemy
 		enemyShipFormation.attach(this);
 		this.ship = new Ship(this.width / 2, this.height - 30, Color.RED); // add by team HUD
