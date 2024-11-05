@@ -14,6 +14,8 @@ import Sound_Operator.SoundManager;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  */
 public class EnemyShip extends Entity {
+	public static final int BOSS_WIDTH = 48; // Width of BOSS hitbox
+	public static final int BOSS_HEIGHT = 32; // Width of BOSS hitbox
 	/** Point value of a type A enemy. */
 	private static final int A_TYPE_POINTS = 10;
 	/** Point value of a type B enemy. */
@@ -61,16 +63,16 @@ public class EnemyShip extends Entity {
 
 
 	public EnemyShip(final int positionX, final int positionY,
-			final SpriteType spriteType,int hp,int x, int y) {// Edited by Enemy
-		super(positionX, positionY, 12 * 2, 8 * 2, HpEnemyShip.determineColor(hp));
+					 final SpriteType spriteType, int hp, int x, int y) { // Edited by Enemy
+		super(positionX, positionY, getShipWidth(spriteType) * 2, getShipHeight(spriteType) * 2, HpEnemyShip.determineColor(hp));// return the hitbox to width and height
 
-		this.hp = hp;// Add by team Enemy
+		this.hp = hp; // Add by team Enemy
 		this.spriteType = spriteType;
 		this.animationCooldown = Core.getCooldown(500);
 		this.isDestroyed = false;
 		this.x = x; // Add by team enemy
 		this.y = y; // Add by team enemy
-		this.speedMultiplier=1.0; // default 1.0
+		this.speedMultiplier = 1.0; // default 1.0
 		this.defaultSpeedMultiplier = 1.0;
 
 		switch (this.spriteType) {
@@ -86,15 +88,24 @@ public class EnemyShip extends Entity {
 			case EnemyShipC2:
 				this.pointValue = C_TYPE_POINTS;
 				break;
-			case ExplosiveEnemyShip1: //Edited by Enemy
+			case ExplosiveEnemyShip1: // Edited by Enemy
 			case ExplosiveEnemyShip2:
-				super.setColor(new Color(237, 28, 36)); //set ExplosiveEnemyShip Color
+				super.setColor(new Color(237, 28, 36)); // set ExplosiveEnemyShip Color
 				this.pointValue = EXPLOSIVE_TYPE_POINTS;
 				break;
 			default:
 				this.pointValue = 0;
 				break;
 		}
+	}
+
+	// Method for determining the size of the boss and the general ship
+	private static int getShipWidth(SpriteType spriteType) {
+		return spriteType == SpriteType.Boss ? BOSS_WIDTH : 12; // NormalShip: 24, Boss: 48
+	}
+
+	private static int getShipHeight(SpriteType spriteType) {
+		return spriteType == SpriteType.Boss ? BOSS_HEIGHT : 8; // NormalShip 16, Boss: 32
 	}
 
 	/**
@@ -219,7 +230,7 @@ public class EnemyShip extends Entity {
 	 * Setter for the Hp of the Enemy ship.
 	 *
 	 * @param hp
-	 * 			New hp of the Enemy ship.
+	 *          New hp of the Enemy ship.
 	 */
 	public void setHp(int hp) {
 		this.hp = hp;
