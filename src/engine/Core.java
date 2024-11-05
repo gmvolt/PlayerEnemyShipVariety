@@ -45,25 +45,25 @@ public final class Core {
 	
 	/** Difficulty settings for level 1. */
 	private static final GameSettings SETTINGS_LEVEL_1 =
-			new GameSettings(5, 4, 60, 2000, 1);
+			new GameSettings(5, 4, 60, 2000, 1, false);
 	/** Difficulty settings for level 2. */
 	private static final GameSettings SETTINGS_LEVEL_2 =
-			new GameSettings(5, 5, 50, 2500, 1);
+			new GameSettings(1, 1, 50, 2500, 1, true);
 	/** Difficulty settings for level 3. */
 	private static final GameSettings SETTINGS_LEVEL_3 =
-			new GameSettings(1, 1, -8, 500, 1);
+			new GameSettings(1, 1, -8, 500, 1, false);
 	/** Difficulty settings for level 4. */
 	private static final GameSettings SETTINGS_LEVEL_4 =
-			new GameSettings(6, 6, 30, 1500, 2);
+			new GameSettings(6, 6, 30, 1500, 2, false);
 	/** Difficulty settings for level 5. */
 	private static final GameSettings SETTINGS_LEVEL_5 =
-			new GameSettings(7, 6, 20, 1000, 2);
+			new GameSettings(7, 6, 20, 1000, 2, false);
 	/** Difficulty settings for level 6. */
 	private static final GameSettings SETTINGS_LEVEL_6 =
-			new GameSettings(7, 7, 10, 1000, 3);
+			new GameSettings(7, 7, 10, 1000, 3, false);
 	/** Difficulty settings for level 7. */
 	private static final GameSettings SETTINGS_LEVEL_7 =
-			new GameSettings(8, 7, 2, 500, 1);
+			new GameSettings(8, 7, 2, 500, 1, false);
 	
 	/** Frame to draw the screen on. */
 	private static Frame frame;
