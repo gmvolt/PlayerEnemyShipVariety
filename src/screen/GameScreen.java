@@ -226,7 +226,7 @@ public class GameScreen extends Screen {
 		drawManager.loadBackground(this.level);
 
 		// Use BossEnemyShipFormation on specific levels (2, 4, 6)
-		if (this.level == 2 || this.level == 4 || this.level == 6) {
+		if (this.gameSettings.isBossLevel()) {
 			enemyShipFormation = new EnemyShipFormation(this.gameSettings); ////////////////////////////////////Change this to BossEnemyShipFormation - Gyeongju
 		} else {
 			enemyShipFormation = new EnemyShipFormation(this.gameSettings);
