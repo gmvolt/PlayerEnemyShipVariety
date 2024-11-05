@@ -117,7 +117,14 @@ public class DrawManager {
 		AddSign,
 		/** Gem - Added by CtrlS */
 		Gem,
-        ItemSpeedUp, ItemSpeedSlow, Obstacle
+        ItemSpeedUp, ItemSpeedSlow, Obstacle,
+
+		BossALeft1,
+		BossAMiddle1,
+		BossARight1,
+		BossALeft2,
+		BossAMiddle2,
+		BossARight2
 
 	};
 
@@ -164,6 +171,13 @@ public class DrawManager {
 			spriteMap.put(SpriteType.ItemPierce, new boolean[7][7]);
 			spriteMap.put(SpriteType.ItemSpeedUp, new boolean[9][9]);
 			spriteMap.put(SpriteType.ItemSpeedSlow, new boolean[9][9]);
+			// by Enemy team+
+			spriteMap.put(SpriteType.BossALeft1, new boolean[12][24]);
+			spriteMap.put(SpriteType.BossAMiddle1, new boolean[12][24]);
+			spriteMap.put(SpriteType.BossARight1, new boolean[12][24]);
+			spriteMap.put(SpriteType.BossALeft2, new boolean[12][24]);
+			spriteMap.put(SpriteType.BossAMiddle2, new boolean[12][24]);
+			spriteMap.put(SpriteType.BossARight2, new boolean[12][24]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
