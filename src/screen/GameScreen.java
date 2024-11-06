@@ -13,14 +13,7 @@ import Enemy.*;
 import HUDTeam.DrawAchievementHud;
 import HUDTeam.DrawManagerImpl;
 import engine.*;
-import entity.Bullet;
-import entity.BulletPool;
-import entity.EnemyShip;
-import entity.EnemyShipFormation;
-// import entity.BossEnemyShipFormation; ////////////////////////////////////////////////////////////////////////////////////// Activate or change this line - Gyeongju
-import entity.Entity;
-import entity.Obstacle;
-import entity.Ship;
+import entity.*;
 // shield and heart recovery
 import inventory_develop.*;
 // Sound Operator
@@ -59,7 +52,7 @@ public class GameScreen extends Screen {
 	/** Formation of enemy ships. */
 	private EnemyShipFormation enemyShipFormation;
 	/** Formation of boss enemy ships. */
-	// private BossEnemyShipFormation bossEnemyShipFormation; //////////////////////////////////////////////////////////////////////Activate or change this line - Gyeongju
+	private BossFormation bossFormation; //////////////////////////////////////////////////////////////////////Activate or change this line - Gyeongju
 	/** Player's ship. */
 	private Ship ship;
 	public Ship player2;
@@ -220,51 +213,90 @@ public class GameScreen extends Screen {
 
 		// Use BossEnemyShipFormation on specific levels (2, 4, 6)
 		if (this.gameSettings.isBossLevel()) {
-			enemyShipFormation = new EnemyShipFormation(this.gameSettings); ////////////////////////////////////Change this to BossEnemyShipFormation - Gyeongju
+			bossFormation = new BossFormation(this.gameSettings); ////////////////////////////////////Change this to BossEnemyShipFormation - Gyeongju
+			bossFormation.setScoreManager(this.scoreManager);//add by team Enemy
+			bossFormation.attach(this);
+			this.ship = new Ship(this.width / 2, this.height - 30, Color.RED); // add by team HUD
+
+			/** initialize itemManager */
+			this.itemManager = new ItemManager(this.height, drawManager, this); //by Enemy team
+			this.itemManager.initialize(); //by Enemy team
+			bossFormation.setItemManager(this.itemManager);//add by team Enemy
+			this.player2=null;
+
+			Set<BossParts> bossPartsSet = new HashSet<>();
+			for (BossParts bossParts : this.bossFormation) {
+				bossPartsSet.add(bossParts);
+			}
+			this.itemManager.setBossParts(bossPartsSet);
+
+			// Appears each 10-30 seconds.
+			this.enemyShipSpecialCooldown = Core.getVariableCooldown(
+					BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
+			this.enemyShipSpecialCooldown.reset();
+			this.enemyShipSpecialExplosionCooldown = Core
+					.getCooldown(BONUS_SHIP_EXPLOSION);
+			this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
+			this.bullets = new HashSet<PiercingBullet>(); // Edited by Enemy
+
+			this.startTime = System.currentTimeMillis();    //clove
+
+			// Special input delay / countdown.
+			this.gameStartTime = System.currentTimeMillis();
+			this.inputDelay = Core.getCooldown(INPUT_DELAY);
+			this.inputDelay.reset();
+
+			// Soomin Lee / TeamHUD
+			this.playStartTime = gameStartTime + INPUT_DELAY;
+			this.playTimePre = playTime;
+
+
+			// 	// --- OBSTACLES - Initialize obstacles
+			this.obstacles = new HashSet<>();
+			this.obstacleSpawnCooldown = Core.getCooldown(Math.max(2000 - (level * 200), 500)); // Minimum 0.5s
 		} else {
 			enemyShipFormation = new EnemyShipFormation(this.gameSettings);
+			enemyShipFormation.setScoreManager(this.scoreManager);//add by team Enemy
+			enemyShipFormation.attach(this);
+			this.ship = new Ship(this.width / 2, this.height - 30, Color.RED); // add by team HUD
+
+			/** initialize itemManager */
+			this.itemManager = new ItemManager(this.height, drawManager, this); //by Enemy team
+			this.itemManager.initialize(); //by Enemy team
+			enemyShipFormation.setItemManager(this.itemManager);//add by team Enemy
+			this.player2=null;
+
+			Set<EnemyShip> enemyShipSet = new HashSet<>();
+			for (EnemyShip enemyShip : this.enemyShipFormation) {
+				enemyShipSet.add(enemyShip);
+			}
+			this.itemManager.setEnemyShips(enemyShipSet);
+
+			// Appears each 10-30 seconds.
+			this.enemyShipSpecialCooldown = Core.getVariableCooldown(
+					BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
+			this.enemyShipSpecialCooldown.reset();
+			this.enemyShipSpecialExplosionCooldown = Core
+					.getCooldown(BONUS_SHIP_EXPLOSION);
+			this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
+			this.bullets = new HashSet<PiercingBullet>(); // Edited by Enemy
+
+			this.startTime = System.currentTimeMillis();    //clove
+
+			// Special input delay / countdown.
+			this.gameStartTime = System.currentTimeMillis();
+			this.inputDelay = Core.getCooldown(INPUT_DELAY);
+			this.inputDelay.reset();
+
+			// Soomin Lee / TeamHUD
+			this.playStartTime = gameStartTime + INPUT_DELAY;
+			this.playTimePre = playTime;
+
+
+			// 	// --- OBSTACLES - Initialize obstacles
+			this.obstacles = new HashSet<>();
+			this.obstacleSpawnCooldown = Core.getCooldown(Math.max(2000 - (level * 200), 500)); // Minimum 0.5s
 		}
-
-		enemyShipFormation.setScoreManager(this.scoreManager);//add by team Enemy
-		enemyShipFormation.attach(this);
-		this.ship = new Ship(this.width / 2, this.height - 30, Color.RED); // add by team HUD
-
-		/** initialize itemManager */
-		this.itemManager = new ItemManager(this.height, drawManager, this); //by Enemy team
-		this.itemManager.initialize(); //by Enemy team
-		enemyShipFormation.setItemManager(this.itemManager);//add by team Enemy
-		this.player2=null;
-
-		Set<EnemyShip> enemyShipSet = new HashSet<>();
-		for (EnemyShip enemyShip : this.enemyShipFormation) {
-			enemyShipSet.add(enemyShip);
-		}
-		this.itemManager.setEnemyShips(enemyShipSet);
-
-		// Appears each 10-30 seconds.
-		this.enemyShipSpecialCooldown = Core.getVariableCooldown(
-				BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
-		this.enemyShipSpecialCooldown.reset();
-		this.enemyShipSpecialExplosionCooldown = Core
-				.getCooldown(BONUS_SHIP_EXPLOSION);
-		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
-		this.bullets = new HashSet<PiercingBullet>(); // Edited by Enemy
-
-		this.startTime = System.currentTimeMillis();    //clove
-
-		// Special input delay / countdown.
-		this.gameStartTime = System.currentTimeMillis();
-		this.inputDelay = Core.getCooldown(INPUT_DELAY);
-		this.inputDelay.reset();
-
-		// Soomin Lee / TeamHUD
-		this.playStartTime = gameStartTime + INPUT_DELAY;
-		this.playTimePre = playTime;
-
-
-		// 	// --- OBSTACLES - Initialize obstacles
-		this.obstacles = new HashSet<>();
-		this.obstacleSpawnCooldown = Core.getCooldown(Math.max(2000 - (level * 200), 500)); // Minimum 0.5s
 	}
 
 	/**
@@ -362,8 +394,14 @@ public class GameScreen extends Screen {
 			this.item.updateBarrierAndShip(this.ship);   // team Inventory
 			this.speedItem.update();         // team Inventory
 			this.feverTimeItem.update();
-			this.enemyShipFormation.update();
-			this.enemyShipFormation.shoot(this.bullets);
+			if(this.gameSettings.isBossLevel()){
+				this.bossFormation.update();
+				this.bossFormation.shoot(this.bullets);
+			}
+			else{
+				this.enemyShipFormation.update();
+				this.enemyShipFormation.shoot(this.bullets);
+			}
 		}
 		//manageCollisions();
 		manageCollisions_add_item(); //by Enemy team
@@ -471,8 +509,8 @@ public class GameScreen extends Screen {
 			drawManager.drawEntity(this.enemyShipSpecial,
 					this.enemyShipSpecial.getPositionX(),
 					this.enemyShipSpecial.getPositionY());
-
-		enemyShipFormation.draw();
+		if(this.gameSettings.isBossLevel()) { bossFormation.draw(); }
+		else { enemyShipFormation.draw(); }
 
 		DrawManagerImpl.drawSpeed(this, ship.getSpeed()); // Ko jesung / HUD team
 		DrawManagerImpl.drawSeparatorLine(this,  this.height-65); // Ko jesung / HUD team
@@ -653,53 +691,104 @@ public class GameScreen extends Screen {
 			} else {
 				// CtrlS - set fire_id of bullet.
 				bullet.setFire_id(fire_id);
-				for (EnemyShip enemyShip : this.enemyShipFormation) {
-					if (!enemyShip.isDestroyed()
-							&& checkCollision(bullet, enemyShip)) {
-						int CntAndPnt[] = this.enemyShipFormation._destroy(bullet, enemyShip, false);    // team Inventory
-						this.shipsDestroyed += CntAndPnt[0];
-						int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
+				if(this.gameSettings.isBossLevel()){
+					for (BossParts bossParts : this.bossFormation) {
+						if (!bossParts.isDestroyed()
+								&& checkCollision(bullet, bossParts)) {
+							int CntAndPnt[] = this.bossFormation.destroy(bossParts, false);    // team Inventory
+							this.shipsDestroyed += CntAndPnt[0];
+							int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
 
-						if(enemyShip.getHp() <= 0) {
-							//inventory_f fever time is activated, the score is doubled.
-							if(feverTimeItem.isActive()) {
-								feverScore = feverScore * 10;
+							if(bossParts.getHp() <= 0) {
+								//inventory_f fever time is activated, the score is doubled.
+								if(feverTimeItem.isActive()) {
+									feverScore = feverScore * 10;
+								}
+								this.shipsDestroyed++;
 							}
+
+							this.scoreManager.addScore(feverScore); //clove
+							this.score += CntAndPnt[1];
+
+							// CtrlS - If collision occur then check the bullet can process
+							if (!processedFireBullet.contains(bullet.getFire_id())) {
+								// CtrlS - increase hitCount if the bullet can count
+								if (bullet.isCheckCount()) {
+									hitCount++;
+									bullet.setCheckCount(false);
+									this.logger.info("Hit count!");
+									processedFireBullet.add(bullet.getFire_id()); // mark this bullet_id is processed.
+								}
+							}
+
+							bullet.onCollision(bossParts); // Handle bullet collision with enemy ship
+
+							// Check PiercingBullet piercing count and add to recyclable if necessary
+							if (bullet.getPiercingCount() <= 0) {
+								//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
+								bullet.setCheckCount(true);
+								recyclable.add(bullet);
+							}
+						}
+						// Added by team Enemy.
+						// Enemy killed by Explosive enemy gives points too
+						if (bossParts.isChainExploded()) {
+							this.score += bossParts.getPointValue();
 							this.shipsDestroyed++;
-						}
-
-            this.scoreManager.addScore(feverScore); //clove
-            this.score += CntAndPnt[1];
-
-						// CtrlS - If collision occur then check the bullet can process
-						if (!processedFireBullet.contains(bullet.getFire_id())) {
-							// CtrlS - increase hitCount if the bullet can count
-							if (bullet.isCheckCount()) {
-								hitCount++;
-								bullet.setCheckCount(false);
-								this.logger.info("Hit count!");
-								processedFireBullet.add(bullet.getFire_id()); // mark this bullet_id is processed.
-							}
-						}
-
-						bullet.onCollision(enemyShip); // Handle bullet collision with enemy ship
-
-						// Check PiercingBullet piercing count and add to recyclable if necessary
-						if (bullet.getPiercingCount() <= 0) {
-							//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
-							bullet.setCheckCount(true);
-							recyclable.add(bullet);
+							bossParts.setChainExploded(false); // resets enemy's chain explosion state.
 						}
 					}
-					// Added by team Enemy.
-					// Enemy killed by Explosive enemy gives points too
-					if (enemyShip.isChainExploded()) {
-						if (enemyShip.getColor() == Color.MAGENTA) {
-							this.itemManager.dropItem(enemyShip, 1, 1);
+
+				}
+				else{
+					for (EnemyShip enemyShip : this.enemyShipFormation) {
+						if (!enemyShip.isDestroyed()
+								&& checkCollision(bullet, enemyShip)) {
+							int CntAndPnt[] = this.enemyShipFormation._destroy(bullet, enemyShip, false);    // team Inventory
+							this.shipsDestroyed += CntAndPnt[0];
+							int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
+
+							if(enemyShip.getHp() <= 0) {
+								//inventory_f fever time is activated, the score is doubled.
+								if(feverTimeItem.isActive()) {
+									feverScore = feverScore * 10;
+								}
+								this.shipsDestroyed++;
+							}
+
+							this.scoreManager.addScore(feverScore); //clove
+							this.score += CntAndPnt[1];
+
+							// CtrlS - If collision occur then check the bullet can process
+							if (!processedFireBullet.contains(bullet.getFire_id())) {
+								// CtrlS - increase hitCount if the bullet can count
+								if (bullet.isCheckCount()) {
+									hitCount++;
+									bullet.setCheckCount(false);
+									this.logger.info("Hit count!");
+									processedFireBullet.add(bullet.getFire_id()); // mark this bullet_id is processed.
+								}
+							}
+
+							bullet.onCollision(enemyShip); // Handle bullet collision with enemy ship
+
+							// Check PiercingBullet piercing count and add to recyclable if necessary
+							if (bullet.getPiercingCount() <= 0) {
+								//Ctrl-S : set true of CheckCount if the bullet is planned to recycle.
+								bullet.setCheckCount(true);
+								recyclable.add(bullet);
+							}
 						}
-						this.score += enemyShip.getPointValue();
-						this.shipsDestroyed++;
-						enemyShip.setChainExploded(false); // resets enemy's chain explosion state.
+						// Added by team Enemy.
+						// Enemy killed by Explosive enemy gives points too
+						if (enemyShip.isChainExploded()) {
+							if (enemyShip.getColor() == Color.MAGENTA) {
+								this.itemManager.dropItem(enemyShip, 1, 1);
+							}
+							this.score += enemyShip.getPointValue();
+							this.shipsDestroyed++;
+							enemyShip.setChainExploded(false); // resets enemy's chain explosion state.
+						}
 					}
 				}
 				if (this.enemyShipSpecial != null
@@ -851,9 +940,18 @@ public class GameScreen extends Screen {
 	 */
 	private int getRemainingEnemies() {
 		int remainingEnemies = 0;
-		for (EnemyShip enemyShip : this.enemyShipFormation) {
-			if (!enemyShip.isDestroyed()) {
-				remainingEnemies++;
+		if(this.gameSettings.isBossLevel()){
+			for (BossParts bossParts : this.bossFormation) {
+				if (!bossParts.isDestroyed()) {
+					remainingEnemies = 1;
+				}
+			}
+		}
+		else{
+			for (EnemyShip enemyShip : this.enemyShipFormation) {
+				if (!enemyShip.isDestroyed()) {
+					remainingEnemies++;
+				}
 			}
 		}
 		return remainingEnemies;

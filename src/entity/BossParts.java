@@ -27,6 +27,8 @@ public class BossParts extends Entity {
 	/** Speed reduction or increase multiplier (1.0 means normal speed). */
 	private double speedMultiplier;
 	private double defaultSpeedMultiplier;
+	/** Checks if the ship is bombed */
+	private boolean isChainExploded;
 
 	/**
 	 * Constructor, establishes the part's properties.
@@ -83,11 +85,23 @@ public class BossParts extends Entity {
 			this.animationCooldown.reset();
 
 			switch (this.spriteType) {
-				case EnemyShipA1:
-					this.spriteType = SpriteType.EnemyShipA2;
+				case BossAMiddle1:
+					this.spriteType = SpriteType.BossAMiddle2;
 					break;
-				case EnemyShipA2:
-					this.spriteType = SpriteType.EnemyShipA1;
+				case BossAMiddle2:
+					this.spriteType = SpriteType.BossAMiddle1;
+					break;
+				case BossALeft1:
+					this.spriteType = SpriteType.BossALeft2;
+					break;
+				case BossALeft2:
+					this.spriteType = SpriteType.BossALeft1;
+					break;
+				case BossARight1:
+					this.spriteType = SpriteType.BossARight2;
+					break;
+				case BossARight2:
+					this.spriteType = SpriteType.BossARight1;
 					break;
 				default:
 					break;
@@ -102,25 +116,26 @@ public class BossParts extends Entity {
 	 * @return color of Boss
 	 */
 	public static Color determineColor(int hp) {
-		return switch (hp) {
-			case 20 -> Color.BLUE;
-			case 30 -> Color.RED; // 추가 보스의 경우를 위한 임시 체력과 색깔
-			case 40 -> Color.GREEN; // 위와 동일
-			default -> Color.WHITE; // 위와 동일
-		};
+		if(hp <= 1) return Color.red;
+		else if(hp <= 5) return Color.green;
+		else if (hp <= 8) return Color.blue;
+		else return Color.white;
 	}
 
 	public final void changeColor() {
 	}
 
-	public final void hit() {
-		this.hp -= 1;
+	public static void hit(BossParts bossParts) {
+		int hp = bossParts.getHp();
+		hp -= 1;
+		bossParts.setHp(hp);
 
 		// Maybe we should add blinking effect here when the Boss get hit.
 
 		if (hp <= 0) {
-			destroy();
+			bossParts.destroy();
 		}
+		bossParts.setColor(determineColor(hp));
 	}
 
 	/**
@@ -128,7 +143,9 @@ public class BossParts extends Entity {
 	 */
 	public final void destroy() {
 		this.isDestroyed = true;
+		sm = SoundManager.getInstance();
 		sm.playES("special_enemy_die");
+		this.spriteType = SpriteType.Explosion;
 	}
 
 	/**
@@ -175,4 +192,31 @@ public class BossParts extends Entity {
 	public void resetSpeedMultiplier() {
 		this.speedMultiplier = this.defaultSpeedMultiplier;
 	}
+
+	/**
+	 * Destroys ship, causing a chain explode.
+	 */
+	public final void chainExplode() { // Added by team Enemy
+		destroy();
+		setChainExploded(true);
+		setHp(0);
+	}
+
+	/**
+	 * Checks if the ship has been chain exploded.
+	 *
+	 * @return True if the ship has been chain exploded.
+	 */
+	public final boolean isChainExploded() {
+		return this.isChainExploded;
+	}
+
+	/**
+	 * Setter for enemy ship's isChainExploded to false.
+	 */
+	public final void setChainExploded(boolean isChainExploded) {
+		this.isChainExploded = isChainExploded;
+	}
+
+
 }

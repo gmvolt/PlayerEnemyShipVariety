@@ -1,6 +1,7 @@
 package Enemy;
 
 import engine.Core;
+import entity.BossParts;
 import entity.EnemyShip;
 import entity.Ship;
 import inventory_develop.Bomb;
@@ -34,6 +35,7 @@ public class ItemManager {
     protected Logger logger = Core.getLogger();
     private Set<Item> recyclableItems = new HashSet<>();
     private Set<EnemyShip> enemyShips;
+    private Set<BossParts> bossParts;
     private ItemBarrierAndHeart Item2;
     private NumberOfBullet numberOfBullet;
     private SpeedItem speedItem;
@@ -90,6 +92,7 @@ public class ItemManager {
     public void setEnemyShips(Set<EnemyShip> enemyShips) {
         this.enemyShips = enemyShips;
     }
+    public void setBossParts(Set<BossParts> bossParts) { this.bossParts = bossParts; }
 
     // team Inventory
     public void OperateItem(Item item) {
