@@ -39,8 +39,8 @@ public class Background {
         this.backgroundHeight = imageHeight;
         this.horizontalOffset = -screenWidth;
         this.verticalOffset = 0;
-        this.scrollSpeedHorizontal = 3;
-        this.scrollSpeedVertical = 1;
+        this.scrollSpeedHorizontal = 1;
+        this.scrollSpeedVertical = 0;
         this.offsetUpdateInterval = 0;
     }
 
