@@ -48,7 +48,7 @@ public final class Core {
 	
 	/** Difficulty settings for level 1. */
 	private static final GameSettings SETTINGS_LEVEL_1 =
-			new GameSettings(3, 1, 20, 500, 1, true); // temporary set this level to Boss level to test - Jaemin Kwak
+			new GameSettings(3, 1, 20, 500, 1, false); // temporary set this level to Boss level to test - Jaemin Kwak
 	/** Difficulty settings for level 2. */
 	private static final GameSettings SETTINGS_LEVEL_2 =
 			new GameSettings(1, 1, 50, 2500, 1, true);
@@ -165,12 +165,25 @@ public final class Core {
 			case 2:
 				// Game & score.
 				LOGGER.info("Starting inGameBGM");
+
 				// Sound Operator
 				sm.playES("start_button_ES");
-				sm.playBGM("inGame_bgm");
+
 
 				do {
 					// One extra live every few levels.
+					if (gameState.getLevel() == 1 ||
+							gameSettings.get(gameState.getLevel() - 2).isBossLevel() !=
+									gameSettings.get(gameState.getLevel() - 1).isBossLevel()) {
+						// 타입이 변경되었을 때만 BGM을 변경
+						sm.stopAllBGM();  // 현재 BGM 멈춤
+						if (gameSettings.get(gameState.getLevel() - 1).isBossLevel()) {
+							sm.playBGM("bossStage_bgm");
+						} else {
+							sm.playBGM("inGame_bgm");
+						}
+					}
+
 					boolean bonusLife = gameState.getLevel()
 							% EXTRA_LIFE_FRECUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
