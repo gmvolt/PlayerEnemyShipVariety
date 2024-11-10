@@ -65,3 +65,5 @@
   - [Fever Time(ES)](https://pixabay.com/sound-effects/8bit-music-for-game-68698/) - &copy; annoyedCactus 2022
   - [enemy_explosion(ES)](https://pixabay.com/ko/sound-effects/retro-explode-2-236688/) - &copy; Driken5482 2024
   - [get_item(ES)](https://pixabay.com/ko/sound-effects/coin-collect-retro-8-bit-sound-effect-145251/) - &copy; Lesiakower 2023
+  - [Boss Battle Loop #2(BGM)](https://freesound.org/people/Sirkoto51/sounds/367504/)) - &copy; Sirkoto51 2016
+  - [World Clear 8 Bit(BGM)](https://freesound.org/people/Mrthenoronha/sounds/518308/)) - &copy; Mrthenoronha 2020
