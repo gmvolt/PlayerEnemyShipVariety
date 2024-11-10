@@ -275,9 +275,19 @@ public final class Core {
 				LOGGER.info("Starting inGameBGM");
 				// Sound Operator
 				sm.playES("start_button_ES");
-				sm.playBGM("inGame_bgm");
 
 				do {
+					if (gameState.getLevel() == 1 ||
+							gameSettings.get(gameState.getLevel() - 2).isBossLevel() !=
+									gameSettings.get(gameState.getLevel() - 1).isBossLevel()) {
+						// 타입이 변경되었을 때만 BGM을 변경
+						sm.stopAllBGM();  // 현재 BGM 멈춤
+						if (gameSettings.get(gameState.getLevel() - 1).isBossLevel()) {
+							sm.playBGM("bossStage_bgm");
+						} else {
+							sm.playBGM("inGame_bgm");
+						}
+					}
 					if (gameSettings == null || gameSettings.isEmpty()) {
 						gameSettings = new ArrayList<>();
 						gameSettings.add(SETTINGS_LEVEL_1);
