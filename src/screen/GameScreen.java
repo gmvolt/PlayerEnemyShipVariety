@@ -21,6 +21,8 @@ import Sound_Operator.SoundManager;
 import clove.ScoreManager;    // CLOVE
 import twoplayermode.TwoPlayerMode;
 
+import javax.imageio.ImageIO;
+
 
 /**
  * Implements the game screen, where the action happens.
@@ -209,7 +211,12 @@ public class GameScreen extends Screen {
 	public void initialize() {
 		super.initialize();
 		/** initialize background **/
-		drawManager.loadBackground(this.level);
+
+		try {
+			drawManager.loadBackground(this.level);
+		} catch (Exception e) {
+			logger.info("★★No Background image. It need to be checked★★");
+		}
 
 		// Use BossEnemyShipFormation on specific levels (2, 4, 6)
 		if (this.gameSettings.isBossLevel()) {
@@ -361,7 +368,7 @@ public class GameScreen extends Screen {
 					this.ship.moveLeft();
 					this.backgroundMoveLeft = true;
 				}
-				if (inputManager.isKeyDown(KeyEvent.VK_ENTER))
+				if (inputManager.isKeyDown(KeyEvent.VK_ENTER) || inputManager.isKeyDown(KeyEvent.VK_SPACE))
 					if (this.ship.shoot(this.bullets)) {
 						this.bulletsShot++;
 						this.fire_id++;
