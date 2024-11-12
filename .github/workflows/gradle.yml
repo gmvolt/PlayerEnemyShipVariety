@@ -1,27 +1,46 @@
-name: Java CI
+name: Auto Merge on Review Approval
 
 on:
-  push:
-    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]
+    types: [submitted]
 
 jobs:
-  build:
+  check-approvals:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+      - name: Check PR Approvals
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 현재 PR 번호 가져오기
+          PR_NUMBER=$(echo $GITHUB_REF | cut -d'/' -f3)
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
+          # 모든 리뷰 상태 가져오기
+          REVIEWS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews")
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+          # 승인된 리뷰어 수 확인
+          APPROVAL_COUNT=$(echo "$REVIEWS" | jq '[.[] | select(.state == "APPROVED")] | length')
 
-      - name: Build with Gradle
-        run: ./gradlew build
+          # 필요한 승인 수 정의 (예: 2명의 리뷰어 승인)
+          REQUIRED_APPROVALS=2
+
+          if [ "$APPROVAL_COUNT" -ge "$REQUIRED_APPROVALS" ]; then
+            echo "All required approvals have been met."
+            echo "##[set-output name=approved;]true"
+          else
+            echo "Not all required approvals have been met."
+            echo "##[set-output name=approved;]false"
+          fi
+
+      - name: Merge Pull Request
+        if: steps.check-approvals.outputs.approved == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(echo $GITHUB_REF | cut -d'/' -f3)
+          curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/merge" \
+               -d '{"merge_method":"merge"}'
