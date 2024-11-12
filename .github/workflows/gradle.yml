@@ -24,7 +24,7 @@ jobs:
           APPROVAL_COUNT=$(echo "$REVIEWS" | jq '[.[] | select(.state == "APPROVED")] | length')
 
           # 필요한 승인 수 정의 (예: 2명의 리뷰어 승인)
-          REQUIRED_APPROVALS=2
+          REQUIRED_APPROVALS=1
 
           if [ "$APPROVAL_COUNT" -ge "$REQUIRED_APPROVALS" ]; then
             echo "All required approvals have been met."
