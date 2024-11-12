@@ -45,7 +45,7 @@
   "keyToString": {
     "Application.Core.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "test-ci",
+    "git-widget-placeholder": "asdf",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/OSYSTUDY/241018/Invaders-SDP_TEAMstarter",
     "node.js.detected.package.eslint": "true",
@@ -117,6 +117,7 @@
       <workItem from="1728890316138" duration="346000" />
       <workItem from="1731429356468" duration="106000" />
       <workItem from="1731429841691" duration="5000" />
+      <workItem from="1731432666032" duration="24000" />
     </task>
     <servers />
   </component>
