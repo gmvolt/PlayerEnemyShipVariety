@@ -41,6 +41,3 @@
 
   ### Resources
 
-  Note that you should install the following resources in order to run the game.
-
-  - [get_item(ES)](https://pixabay.com/ko/sound-effects/coin-collect-retro-8-bit-sound-effect-145251/) - &copy; Lesiakower 2023
