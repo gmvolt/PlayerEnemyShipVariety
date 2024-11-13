@@ -1,0 +1,28 @@
+name: Assign Random Reviewer
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  assign-reviewer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Select a Random Reviewer and Assign
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REVIEWERS=("reviewer1" "reviewer2" "reviewer3")
+          RANDOM_REVIEWER=${REVIEWERS[$RANDOM % ${#REVIEWERS[@]}]}
+          echo "Randomly selected reviewer: $RANDOM_REVIEWER"
+          PR_NUMBER=$(jq --raw-output .number "$GITHUB_EVENT_PATH")
+          curl -s -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/requested_reviewers" \
+            -d "{\"reviewers\":[\"$RANDOM_REVIEWER\"]}"
+          echo "Reviewer $RANDOM_REVIEWER has been assigned to PR #$PR_NUMBER"
