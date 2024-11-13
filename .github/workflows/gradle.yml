@@ -1,6 +1,8 @@
 name: Auto Merge PR on Approval
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened]
   pull_request_review:
     types: [submitted]
 
@@ -12,19 +14,40 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@v4
 
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
       - name: Check PR Approval Status
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # 현재 PR 번호 가져오기
-          PR_NUMBER=$(echo $GITHUB_REF | cut -d'/' -f3)
-
+          # 이벤트 타입에 따라 PR 번호 가져오기
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            PR_NUMBER=$(jq --raw-output .number "$GITHUB_EVENT_PATH")
+          elif [[ "$GITHUB_EVENT_NAME" == "pull_request_review" ]]; then
+            PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          else
+            echo "지원되지 않는 이벤트 타입입니다: $GITHUB_EVENT_NAME"
+            exit 1
+          fi
+          
+          echo "PR 번호: $PR_NUMBER"
+          
+          # PR 번호가 제대로 가져와지지 않았을 경우 에러 메시지 출력
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Error: PR 번호를 가져오지 못했습니다."
+            exit 1
+          fi
+          
           # 모든 리뷰 상태 가져오기
           REVIEWS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews")
-
+          
+          echo "리뷰 상태 확인: $REVIEWS"
+          
           # 승인된 리뷰어 수 확인
           APPROVAL_COUNT=$(echo "$REVIEWS" | jq '[.[] | select(.state == "APPROVED")] | length')
+          echo "승인된 리뷰어 수: $APPROVAL_COUNT"
 
           # 필요한 승인 수 정의 (예: 1명)
           REQUIRED_APPROVALS=1
@@ -42,7 +65,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_NUMBER=$(echo $GITHUB_REF | cut -d'/' -f3)
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
                -H "Accept: application/vnd.github.v3+json" \
                "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/merge" \
