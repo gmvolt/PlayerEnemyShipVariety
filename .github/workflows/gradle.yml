@@ -1,54 +1,71 @@
-name: Auto Merge on Review Approval
+name: Auto Merge PR on Approval
 
 on:
-  # 리뷰 제출 시 워크플로우 트리거를 위한 이벤트 수정
+  pull_request:
+    types: [opened, synchronize, reopened]
   pull_request_review:
     types: [submitted]
 
 jobs:
-  check-approvals:
+  auto-merge:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code
+      - name: Check out the code
         uses: actions/checkout@v4
 
-      - name: Check PR Approvals
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Check PR Approval Status
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # pull_request_review 이벤트에서 PR 번호를 GITHUB_EVENT_PATH에서 직접 가져옴
-          PR_NUMBER=$(jq '.pull_request.number' "$GITHUB_EVENT_PATH")
-
+          # 이벤트 타입에 따라 PR 번호 가져오기
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            PR_NUMBER=$(jq --raw-output .number "$GITHUB_EVENT_PATH")
+          elif [[ "$GITHUB_EVENT_NAME" == "pull_request_review" ]]; then
+            PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          else
+            echo "지원되지 않는 이벤트 타입입니다: $GITHUB_EVENT_NAME"
+            exit 1
+          fi
+          
+          echo "PR 번호: $PR_NUMBER"
+          
+          # PR 번호가 제대로 가져와지지 않았을 경우 에러 메시지 출력
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Error: PR 번호를 가져오지 못했습니다."
+            exit 1
+          fi
+          
           # 모든 리뷰 상태 가져오기
           REVIEWS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews")
-
+          
+          echo "리뷰 상태 확인: $REVIEWS"
+          
           # 승인된 리뷰어 수 확인
           APPROVAL_COUNT=$(echo "$REVIEWS" | jq '[.[] | select(.state == "APPROVED")] | length')
+          echo "승인된 리뷰어 수: $APPROVAL_COUNT"
 
-          # 필요한 승인 수 정의 (여기서는 1명의 리뷰어 승인으로 설정)
+          # 필요한 승인 수 정의 (예: 1명)
           REQUIRED_APPROVALS=1
 
           if [ "$APPROVAL_COUNT" -ge "$REQUIRED_APPROVALS" ]; then
             echo "All required approvals have been met."
-            # 출력 형식 수정: set-output 구문을 올바르게 사용
-            echo "::set-output name=approved::true"
+            echo "approved=true" >> $GITHUB_ENV
           else
             echo "Not all required approvals have been met."
-            echo "::set-output name=approved::false"
+            echo "approved=false" >> $GITHUB_ENV
           fi
 
-      - name: Merge Pull Request
-        # 승인된 경우에만 이 단계가 실행되도록 if 조건 추가
-        if: steps.check-approvals.outputs.approved == 'true'
+      - name: Merge the Pull Request
+        if: env.approved == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # PR 번호를 이벤트 데이터에서 가져옴
-          PR_NUMBER=$(jq '.pull_request.number' "$GITHUB_EVENT_PATH")
-          
-          # 승인된 PR을 자동으로 머지
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
                -H "Accept: application/vnd.github.v3+json" \
                "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/merge" \
