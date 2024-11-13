@@ -21,9 +21,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # 현재 PR 번호 가져오기
-          PR_NUMBER=$(jq --raw-output .number "$GITHUB_EVENT_PATH")
+          # GITHUB_EVENT_PATH에서 PR 번호 가져오기
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           echo "PR 번호: $PR_NUMBER"
+          
+          # PR 번호가 제대로 가져와지지 않았을 경우 에러 메시지 출력
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Error: PR 번호를 가져오지 못했습니다."
+            exit 1
+          fi
           
           # 모든 리뷰 상태 가져오기
           REVIEWS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
@@ -51,7 +57,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_NUMBER=$(jq --raw-output .number "$GITHUB_EVENT_PATH")
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
                -H "Accept: application/vnd.github.v3+json" \
                "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/merge" \
