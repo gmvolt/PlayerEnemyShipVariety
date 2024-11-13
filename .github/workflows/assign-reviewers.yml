@@ -13,7 +13,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y jq gh
-
       - name: Select Random Reviewers
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -21,8 +20,19 @@ jobs:
           # 7명의 조원 GitHub 아이디를 배열에 저장
           REVIEWERS=("Dream-no24" "depave" "this-yujunkim" "gmvolt" "Jangjimin9766" "HSHyun" "NaJhinY")
           
+          # PR 작성자 아이디 가져오기
+          PR_AUTHOR=$(jq --raw-output .pull_request.user.login "$GITHUB_EVENT_PATH")
+          
+          # PR 작성자를 제외한 배열 생성
+          FILTERED_REVIEWERS=()
+          for reviewer in "${REVIEWERS[@]}"; do
+            if [[ "$reviewer" != "$PR_AUTHOR" ]]; then
+              FILTERED_REVIEWERS+=("$reviewer")
+            fi
+          done
+          
           # 배열에서 2명을 무작위로 선택
-          SELECTED_REVIEWERS=($(shuf -e "${REVIEWERS[@]}" -n 2))
+          SELECTED_REVIEWERS=($(shuf -e "${FILTERED_REVIEWERS[@]}" -n 2))
           
           echo "선택된 리뷰어: ${SELECTED_REVIEWERS[@]}"
           
