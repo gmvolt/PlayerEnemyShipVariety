@@ -21,8 +21,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # GITHUB_EVENT_PATH에서 PR 번호 가져오기
-          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          # 이벤트 타입에 따라 PR 번호 가져오기
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            PR_NUMBER=$(jq --raw-output .number "$GITHUB_EVENT_PATH")
+          elif [[ "$GITHUB_EVENT_NAME" == "pull_request_review" ]]; then
+            PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          else
+            echo "지원되지 않는 이벤트 타입입니다: $GITHUB_EVENT_NAME"
+            exit 1
+          fi
+          
           echo "PR 번호: $PR_NUMBER"
           
           # PR 번호가 제대로 가져와지지 않았을 경우 에러 메시지 출력
