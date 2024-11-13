@@ -16,7 +16,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          REVIEWERS=("reviewer1" "reviewer2" "reviewer3")
+          REVIEWERS=("kcyoow" "sheepjun0330" "gmvolt")
           RANDOM_REVIEWER=${REVIEWERS[$RANDOM % ${#REVIEWERS[@]}]}
           echo "Randomly selected reviewer: $RANDOM_REVIEWER"
           PR_NUMBER=$(jq --raw-output .number "$GITHUB_EVENT_PATH")
