@@ -134,7 +134,11 @@ public class BossParts extends Entity {
 
 		if (hp <= 0) {
 			bossParts.destroy();
+		}else{
+			sm = SoundManager.getInstance();
+			sm.playES("hit_enemy");
 		}
+
 		bossParts.setColor(determineColor(hp));
 	}
 
@@ -144,7 +148,22 @@ public class BossParts extends Entity {
 	public final void destroy() {
 		this.isDestroyed = true;
 		sm = SoundManager.getInstance();
-		sm.playES("special_enemy_die");
+		switch (this.spriteType) {
+			case BossAMiddle1:
+			case BossAMiddle2:
+				sm.playES("boss_die");  // 보스 중앙 파괴
+				break;
+			case BossALeft1:
+			case BossALeft2:
+			case BossARight1:
+			case BossARight2:
+				sm.playES("boss_part_destroy");  // 보스 사이드 파괴
+				break;
+			default:
+				sm.playES("special_enemy_die");
+				break;
+		}
+
 		this.spriteType = SpriteType.Explosion;
 	}
 

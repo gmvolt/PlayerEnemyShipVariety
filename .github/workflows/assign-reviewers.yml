@@ -1,0 +1,52 @@
+name: Assign Random Reviewers
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  assign-reviewers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq gh
+      - name: Select Random Reviewers
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 7명의 조원 GitHub 아이디를 배열에 저장
+          REVIEWERS=("Dream-no24" "depave" "this-yujunkim" "gmvolt" "Jangjimin9766" "HSHyun" "NaJhinY")
+          
+          # PR 작성자 아이디 가져오기
+          PR_AUTHOR=$(jq --raw-output .pull_request.user.login "$GITHUB_EVENT_PATH")
+          
+          # PR 작성자를 제외한 배열 생성
+          FILTERED_REVIEWERS=()
+          for reviewer in "${REVIEWERS[@]}"; do
+            if [[ "$reviewer" != "$PR_AUTHOR" ]]; then
+              FILTERED_REVIEWERS+=("$reviewer")
+            fi
+          done
+          
+          # 배열에서 2명을 무작위로 선택
+          SELECTED_REVIEWERS=($(shuf -e "${FILTERED_REVIEWERS[@]}" -n 2))
+          
+          echo "선택된 리뷰어: ${SELECTED_REVIEWERS[@]}"
+          
+          # 선택된 리뷰어를 GitHub API 형식에 맞춰 JSON 배열로 변환
+          JSON_REVIEWERS=$(printf '%s\n' "${SELECTED_REVIEWERS[@]}" | jq -R . | jq -s .)
+          
+          echo "리뷰어 JSON: $JSON_REVIEWERS"
+          
+          # PR 번호 가져오기
+          PR_NUMBER=$(jq --raw-output .number "$GITHUB_EVENT_PATH")
+          
+          # GitHub API를 통해 PR에 리뷰어 지정
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/requested_reviewers" \
+            -d "{\"reviewers\": $JSON_REVIEWERS}"

@@ -1,0 +1,85 @@
+name: Auto Merge PR on Approval  # 워크플로우 이름 설정
+
+on:
+  pull_request_review:
+    types: [submitted]  # 리뷰가 제출될 때 워크플로우 트리거
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: github.base_ref != 'master'  # master 브랜치가 아닌 경우에만 워크플로우 실행
+
+    steps:
+      - name: Set up GitHub CLI
+        # GitHub CLI 및 jq 설치 준비 단계
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq gh  # JSON 파싱과 GitHub CLI 사용을 위한 jq와 gh 설치
+
+      - name: Check out the code
+        uses: actions/checkout@v4  # PR 코드 체크아웃
+
+      - name: Install jq
+        # jq 설치 (JSON 파싱 도구)
+        run: sudo apt-get install -y jq
+
+      - name: Check PR Approval Status
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub API 접근을 위한 토큰 설정
+        run: |
+          # 이벤트 타입에 따라 PR 번호 가져오기
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            # pull_request 이벤트의 경우 PR 번호 추출
+            PR_NUMBER=$(jq --raw-output .number "$GITHUB_EVENT_PATH")
+          elif [[ "$GITHUB_EVENT_NAME" == "pull_request_review" ]]; then
+            # pull_request_review 이벤트의 경우 PR 번호 추출
+            PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          else
+            # 지원되지 않는 이벤트 타입에 대해 에러 출력 후 종료
+            echo "지원되지 않는 이벤트 타입입니다: $GITHUB_EVENT_NAME"
+            exit 1
+          fi
+          
+          echo "PR 번호: $PR_NUMBER"  # PR 번호 출력하여 확인
+          
+          # PR 번호가 제대로 가져와지지 않았을 경우 에러 메시지 출력 및 종료
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Error: PR 번호를 가져오지 못했습니다."
+            exit 1
+          fi
+          
+          # 승인 상태를 확인하기 위해 모든 리뷰 정보 가져오기
+          REVIEWS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews")
+          
+          echo "리뷰 상태 확인: $REVIEWS"  # 리뷰 상태 확인용 출력
+          
+          # 'APPROVED' 상태인 리뷰 개수 계산
+          APPROVAL_COUNT=$(echo "$REVIEWS" | jq '[.[] | select(.state == "APPROVED")] | length')
+          echo "승인된 리뷰어 수: $APPROVAL_COUNT"  # 승인된 리뷰어 수 출력
+
+          # 필요한 승인 수 정의 (예: 2명)
+          REQUIRED_APPROVALS=2  # 최소 승인자 수 설정
+
+          # 승인 수가 필요한 승인 수 이상일 때 approved=true 설정
+          if [ "$APPROVAL_COUNT" -ge "$REQUIRED_APPROVALS" ]; then
+            echo "All required approvals have been met."  # 모든 승인 조건 충족 메시지
+            echo "approved=true" >> $GITHUB_ENV  # 환경 변수 approved=true 설정
+          else
+            echo "Not all required approvals have been met."  # 승인 조건 미충족 메시지
+            echo "approved=false" >> $GITHUB_ENV  # 환경 변수 approved=false 설정
+          fi
+
+      - name: Merge the Pull Request
+        if: env.approved == 'true' && github.base_ref != 'master'  # 승인 조건 충족 및 master 브랜치가 아닐 때만 실행
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub API 접근을 위한 토큰 설정
+        run: |
+          # PR 번호를 다시 가져오기 (머지 단계)
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          # GitHub API를 사용해 PR을 자동 머지
+          curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/merge" \
+               -d '{"merge_method":"merge"}'
+          # merge_method는 기본 merge 방식으로 설정
