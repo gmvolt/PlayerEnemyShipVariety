@@ -18,7 +18,7 @@ import engine.GameSettings;
 import Enemy.*;
 import entity.BossParts;
 import clove.ScoreManager;
-
+import entity.BossVariety;
 import static java.lang.Math.random;
 
 /**
@@ -102,6 +102,8 @@ public class BossFormation implements Iterable<BossParts> {
     private int shipWidth;
     /** Height of one ship. */
     private int shipHeight;
+    /**Separate distance of ships */
+    private  int separationDistance;
     /** List of ships that are able to shoot. */
     private List<BossParts> shooters;
     /** Number of not destroyed ships. */
@@ -132,12 +134,17 @@ public class BossFormation implements Iterable<BossParts> {
      * @param gameSettings
      *            Current game settings.
      */
-    public BossFormation(final GameSettings gameSettings) {
+
+    public BossFormation(final GameSettings gameSettings, BossVariety bossVariety) {
         this.drawManager = Core.getDrawManager();
         this.logger = Core.getLogger();
+
         this.bossPartsFormation = new ArrayList<List<BossParts>>();
+        this.shooters = new ArrayList<BossParts>();
+
         this.currentDirection = Direction.RIGHT;
         this.movementInterval = 0;
+
         this.nShipsWide = gameSettings.getFormationWidth();
         this.nShipsHigh = gameSettings.getFormationHeight();
         this.shootingInterval = gameSettings.getShootingFrecuency();
@@ -145,29 +152,31 @@ public class BossFormation implements Iterable<BossParts> {
                 * SHOOTING_VARIANCE);
         this.baseSpeed = gameSettings.getBaseSpeed();
         this.movementSpeed = this.baseSpeed;
+
         this.positionX = INIT_POS_X;
         this.positionY = INIT_POS_Y;
-        this.shooters = new ArrayList<BossParts>();
-        SpriteType spriteType;
+        this.separationDistance = SEPARATION_DISTANCE;
 
-        this.logger.info("Initializing Boss formation with (" + positionX + "," + positionY + ")");
+        this.positionX = INIT_POS_X;
+        this.positionY = INIT_POS_Y;
 
-        // Each sub-list is a column on the formation.
+        //Get Boss Settings from BossVariety
+        List<SpriteType> spriteTypes = bossVariety.getSpriteTypes();
+        int healthPerPart = bossVariety.getHealthPerPart();
+
         for (int i = 0; i < nShipsWide; i++) {
-            this.bossPartsFormation.add(new ArrayList<>());
-            if (i % 3 == 0) {
-                spriteType = SpriteType.BossALeft1;
-            } else if (i % 3 == 1) {
-                spriteType = SpriteType.BossAMiddle1;
-            } else {
-                spriteType = SpriteType.BossARight1;
+            List<BossParts> column = new ArrayList<>();
+            SpriteType spriteType = spriteTypes.get(i % spriteTypes.size());
+
+            BossParts bossPart = new BossParts(positionX + (SEPARATION_DISTANCE * i), positionY, spriteType, healthPerPart);
+            column.add(bossPart);
+
+            if (spriteType != spriteTypes.get(spriteTypes.size() / 2 - 1)) { // adding shooter excluding center
+                shooters.add(bossPart);
             }
-            BossParts bossParts = new BossParts((SEPARATION_DISTANCE * i) + positionX, positionY, spriteType,5);
-            this.bossPartsFormation.get(i).add(bossParts);
-            if(spriteType != spriteType.BossAMiddle1 && spriteType != spriteType.BossAMiddle2){
-                this.shooters.add(bossParts);
-            }
-            this.shipCount++;
+
+            bossPartsFormation.add(column);
+            shipCount++;
         }
 
         this.shipWidth = this.bossPartsFormation.get(0).get(0).getWidth();
@@ -180,6 +189,8 @@ public class BossFormation implements Iterable<BossParts> {
 
         for (List<BossParts> column : this.bossPartsFormation)
             this.shooters.add(column.get(0));
+
+        logger.info("BossFormation initialized with position (" + positionX + ", " + positionY + ")");
     }
 
     /**
