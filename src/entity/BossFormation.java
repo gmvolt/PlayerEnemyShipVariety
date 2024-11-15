@@ -34,7 +34,7 @@ public class BossFormation implements Iterable<BossParts> {
     /** Initial position in the y-axis. */
     private static final int INIT_POS_Y = 100;
     /** Distance between ships. */
-    private static final int SEPARATION_DISTANCE = 24;
+    private final int separationDistance;
     /** Proportion of C-type ships. */
     private static final double PROPORTION_C = 0.2;
     /** Proportion of B-type ships. */
@@ -102,8 +102,6 @@ public class BossFormation implements Iterable<BossParts> {
     private int shipWidth;
     /** Height of one ship. */
     private int shipHeight;
-    /**Separate distance of ships */
-    private  int separationDistance;
     /** List of ships that are able to shoot. */
     private List<BossParts> shooters;
     /** Number of not destroyed ships. */
@@ -155,7 +153,7 @@ public class BossFormation implements Iterable<BossParts> {
 
         this.positionX = INIT_POS_X;
         this.positionY = INIT_POS_Y;
-        this.separationDistance = SEPARATION_DISTANCE;
+        this.separationDistance = bossVariety.getSeparationDistance();
 
         this.positionX = INIT_POS_X;
         this.positionY = INIT_POS_Y;
@@ -168,12 +166,11 @@ public class BossFormation implements Iterable<BossParts> {
             List<BossParts> column = new ArrayList<>();
             SpriteType spriteType = spriteTypes.get(i % spriteTypes.size());
 
-            BossParts bossPart = new BossParts(positionX + (SEPARATION_DISTANCE * i), positionY, spriteType, healthPerPart);
+            BossParts bossPart = new BossParts(positionX + (separationDistance * i), positionY, spriteType, healthPerPart);
             column.add(bossPart);
 
-            if (spriteType != spriteTypes.get(spriteTypes.size() / 2 - 1)) { // adding shooter excluding center
-                shooters.add(bossPart);
-            }
+            shooters.add(bossPart);
+
 
             bossPartsFormation.add(column);
             shipCount++;
@@ -182,9 +179,9 @@ public class BossFormation implements Iterable<BossParts> {
         this.shipWidth = this.bossPartsFormation.get(0).get(0).getWidth();
         this.shipHeight = this.bossPartsFormation.get(0).get(0).getHeight();
 
-        this.width = (this.nShipsWide - 1) * SEPARATION_DISTANCE
+        this.width = (this.nShipsWide - 1) * separationDistance
                 + this.shipWidth;
-        this.height = (this.nShipsHigh - 1) * SEPARATION_DISTANCE
+        this.height = (this.nShipsHigh - 1) * separationDistance
                 + this.shipHeight;
 
         for (List<BossParts> column : this.bossPartsFormation)

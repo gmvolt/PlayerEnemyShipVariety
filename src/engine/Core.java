@@ -48,10 +48,10 @@ public final class Core {
 	
 	/** Difficulty settings for level 1. */
 	private static final GameSettings SETTINGS_LEVEL_1 =
-			new GameSettings(3, 1, 20, 500, 1, true); // temporary set this level to Boss level to test - Jaemin Kwak
+			new GameSettings(1, 1, 20, 500, 1, true); // temporary set this level to Boss level to test - Jaemin Kwak
 	/** Difficulty settings for level 2. */
 	private static final GameSettings SETTINGS_LEVEL_2 =
-			new GameSettings(1, 1, 50, 2500, 1, true);
+			new GameSettings(3, 1, 50, 2500, 1, true);
 	/** Difficulty settings for level 3. */
 	private static final GameSettings SETTINGS_LEVEL_3 =
 			new GameSettings(1, 1, -8, 500, 1, false);

@@ -103,6 +103,12 @@ public class BossParts extends Entity {
 				case BossARight2:
 					this.spriteType = SpriteType.BossARight1;
 					break;
+				case BossB1:
+					this.spriteType = SpriteType.BossB2;
+					break;
+				case BossB2:
+					this.spriteType = SpriteType.BossB1;
+					break;
 				default:
 					break;
 			}

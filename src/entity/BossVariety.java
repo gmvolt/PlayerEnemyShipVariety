@@ -12,6 +12,7 @@ public class BossVariety {
     private final String name;
     private final List<SpriteType> spriteTypes;
     private final int healthPerPart;
+    private final int separationDistance;
 
     private static final Map<String, BossVariety> bossVarieties = new HashMap<>();
 
@@ -22,30 +23,27 @@ public class BossVariety {
      * @param spriteTypes List of sprite types used for the boss.
      * @param healthPerPart Health value assigned to each boss part.
      */
-    private BossVariety(String name, List<SpriteType> spriteTypes, int healthPerPart) {
+    private BossVariety(String name, List<SpriteType> spriteTypes, int healthPerPart, int separationDistance) {
         this.name = name;
         this.spriteTypes = spriteTypes;
         this.healthPerPart = healthPerPart;
+        this.separationDistance = separationDistance;
     }
 
     static {
         bossVarieties.put("Crab", new BossVariety(
                 "Crab",
-                List.of(SpriteType.BossALeft1, SpriteType.BossAMiddle1, SpriteType.BossARight1),
-                8
-        ));
+                List.of(SpriteType.BossALeft1, SpriteType.BossAMiddle1, SpriteType.BossARight1), 5, 24));
 
         bossVarieties.put("Turtle", new BossVariety(
                 "Turtle",
-                List.of(SpriteType.BossALeft1, SpriteType.BossAMiddle1, SpriteType.BossARight1),
-                5
-        ));
+                List.of(SpriteType.BossB1),8, 50)
+                );
+
 
         bossVarieties.put("DefaultBoss", new BossVariety(
                 "DefaultBoss",
-                List.of(SpriteType.BossALeft1, SpriteType.BossAMiddle1, SpriteType.BossARight1),
-                6
-        ));
+                List.of(SpriteType.BossALeft1, SpriteType.BossAMiddle1, SpriteType.BossARight1),5,24));
     }
 
     /**
@@ -65,7 +63,7 @@ public class BossVariety {
         return spriteTypes;
     }
 
-    public int getHealthPerPart() {
-        return healthPerPart;
-    }
+    public int getHealthPerPart() { return healthPerPart; }
+
+    public int getSeparationDistance() { return separationDistance; }
 }

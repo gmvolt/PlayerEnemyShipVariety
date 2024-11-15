@@ -222,10 +222,10 @@ public class GameScreen extends Screen {
 		// Use BossEnemyShipFormation on specific levels (2, 4, 6)
 		if (this.gameSettings.isBossLevel()) {
 			BossVariety bossVariety;
-			if (level == 2) {
-				bossVariety = BossVariety.getBossVariety("Crab");
-			} else if (level == 4) {
+			if (level == 1) {
 				bossVariety = BossVariety.getBossVariety("Turtle");
+			} else if (level == 4) {
+				bossVariety = BossVariety.getBossVariety("Crab");
 			} else {
 				bossVariety = BossVariety.getBossVariety("DefaultBoss");
 			}
