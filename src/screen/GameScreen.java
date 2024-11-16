@@ -713,7 +713,7 @@ public class GameScreen extends Screen {
 								&& checkCollision(bullet, bossParts)) {
 							int CntAndPnt[] = this.bossFormation.destroy(bossParts, false);    // team Inventory
 							this.shipsDestroyed += CntAndPnt[0];
-							int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
+							int feverScore = bossParts.getPointValue(); //TEAM CLOVE //Edited by team Enemy
 
 							if(bossParts.getHp() <= 0) {
 								//inventory_f fever time is activated, the score is doubled.
@@ -721,10 +721,10 @@ public class GameScreen extends Screen {
 									feverScore = feverScore * 10;
 								}
 								this.shipsDestroyed++;
-							}
 
-							this.scoreManager.addScore(feverScore); //clove
-							this.score += CntAndPnt[1];
+								this.scoreManager.addScore(feverScore); //clove
+								this.score += CntAndPnt[1];
+							}
 
 							// CtrlS - If collision occur then check the bullet can process
 							if (!processedFireBullet.contains(bullet.getFire_id())) {
