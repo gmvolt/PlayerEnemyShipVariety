@@ -584,7 +584,7 @@ public class GameScreen extends Screen {
 				drawManager.drawWave(this, waveCounter, countdown);
 			} else {
 				drawManager.drawCountDown(this, this.level, countdown,
-				this.bonusLife);
+				this.bonusLife, this.gameSettings);
 			}
 
 			drawManager.drawHorizontalLine(this, this.height / 2 - this.height
