@@ -155,13 +155,24 @@ public class BossFormation implements Iterable<BossParts> {
         // Each sub-list is a column on the formation.
         for (int i = 0; i < nShipsWide; i++) {
             this.bossPartsFormation.add(new ArrayList<>());
-            if (i % 3 == 0) {
-                spriteType = SpriteType.BossALeft1;
-            } else if (i % 3 == 1) {
-                spriteType = SpriteType.BossAMiddle1;
-            } else {
-                spriteType = SpriteType.BossARight1;
+            switch (gameSettings.getBossType()) {
+                case "Crab":
+                    if (i % 3 == 0) {
+                        spriteType = SpriteType.BossALeft1;
+                    } else if (i % 3 == 1) {
+                        spriteType = SpriteType.BossAMiddle1;
+                    } else {
+                        spriteType = SpriteType.BossARight1;
+                    }
+                    break;
+                case "Turtle":
+                    spriteType = SpriteType.BossB1;
+                    break;
+                default:
+                    // Temp
+                    spriteType = SpriteType.EnemyShipSpecial;
             }
+
             BossParts bossParts = new BossParts((SEPARATION_DISTANCE * i) + positionX, positionY, spriteType,5);
             this.bossPartsFormation.get(i).add(bossParts);
             if(spriteType != spriteType.BossAMiddle1 && spriteType != spriteType.BossAMiddle2){
