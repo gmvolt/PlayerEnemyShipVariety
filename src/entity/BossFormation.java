@@ -108,6 +108,8 @@ public class BossFormation implements Iterable<BossParts> {
     private int shipCount;
     private static SoundManager sm;
 
+    private boolean isShell;
+
     /** Directions the formation can move. */
     private enum Direction {
         /** Movement to the right side of the screen. */
@@ -445,5 +447,25 @@ public class BossFormation implements Iterable<BossParts> {
      */
     public final boolean isEmpty() {
         return this.shipCount <= 0;
+    }
+
+    /**
+     * Reflects player's bullet when boss type is Turtle and get hit.
+     *
+     * @param bullets
+     *         bullet to be reflected. But it is an eyewash.
+     *
+     */
+    public void reflect(final Set<PiercingBullet> bullets) {
+        if (!shooters.isEmpty()) {
+            BossParts shooter = this.shooters.get(this.shooters.size() / 2);
+//                sm = SoundManager.getInstance();
+//                sm.playES("Enemy_Gun_Shot_1_ES");
+            bullets.add(PiercingBulletPool.getPiercingBullet(
+                    shooter.getPositionX() + shooter.width / 2,
+                    shooter.getPositionY(),
+                    BULLET_SPEED,
+                    0));
+        }
     }
 }

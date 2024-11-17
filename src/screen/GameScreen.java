@@ -678,6 +678,7 @@ public class GameScreen extends Screen {
 	//by Enemy team
 	public void manageCollisions_add_item() {
 		Set<PiercingBullet> recyclable = new HashSet<PiercingBullet>();
+		boolean isShell = false;
 		for (PiercingBullet bullet : this.bullets)
 			if (bullet.getSpeed() > 0) {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
@@ -702,20 +703,25 @@ public class GameScreen extends Screen {
 					for (BossParts bossParts : this.bossFormation) {
 						if (!bossParts.isDestroyed()
 								&& checkCollision(bullet, bossParts)) {
-							int CntAndPnt[] = this.bossFormation.destroy(bossParts, false);    // team Inventory
-							this.shipsDestroyed += CntAndPnt[0];
-							int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
-
-							if(bossParts.getHp() <= 0) {
-								//inventory_f fever time is activated, the score is doubled.
-								if(feverTimeItem.isActive()) {
-									feverScore = feverScore * 10;
-								}
-								this.shipsDestroyed++;
+							if (bossParts.getSpriteType().equals(DrawManager.SpriteType.BossB3)) {
+								isShell = true;
 							}
+							else {
+								int CntAndPnt[] = this.bossFormation.destroy(bossParts, false);    // team Inventory
+								this.shipsDestroyed += CntAndPnt[0];
+								int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
 
-							this.scoreManager.addScore(feverScore); //clove
-							this.score += CntAndPnt[1];
+								if (bossParts.getHp() <= 0) {
+									//inventory_f fever time is activated, the score is doubled.
+									if (feverTimeItem.isActive()) {
+										feverScore = feverScore * 10;
+									}
+									this.shipsDestroyed++;
+								}
+
+								this.scoreManager.addScore(feverScore); //clove
+								this.score += CntAndPnt[1];
+							}
 
 							// CtrlS - If collision occur then check the bullet can process
 							if (!processedFireBullet.contains(bullet.getFire_id())) {
@@ -878,7 +884,7 @@ public class GameScreen extends Screen {
 		}
 		itemManager.removeAllReItems();
 
-
+		if (isShell) bossFormation.reflect(this.bullets);
 	}
 
 
