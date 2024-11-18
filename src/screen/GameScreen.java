@@ -20,6 +20,7 @@ import inventory_develop.*;
 import Sound_Operator.SoundManager;
 import clove.ScoreManager;    // CLOVE
 import twoplayermode.TwoPlayerMode;
+import engine.DrawManager.SpriteType;
 
 import javax.imageio.ImageIO;
 
@@ -220,7 +221,15 @@ public class GameScreen extends Screen {
 
 		// Use BossEnemyShipFormation on specific levels (2, 4, 6)
 		if (this.gameSettings.isBossLevel()) {
-			bossFormation = new BossFormation(this.gameSettings); ////////////////////////////////////Change this to BossEnemyShipFormation - Gyeongju
+			BossVariety bossVariety;
+			if (level == 1) {
+				bossVariety = BossVariety.getBossVariety("Turtle");
+			} else if (level == 4) {
+				bossVariety = BossVariety.getBossVariety("Crab");
+			} else {
+				bossVariety = BossVariety.getBossVariety("DefaultBoss");
+			}
+			bossFormation = new BossFormation(this.gameSettings, bossVariety); ////////////////////////////////////Change this to BossEnemyShipFormation - Gyeongju
 			bossFormation.setScoreManager(this.scoreManager);//add by team Enemy
 			bossFormation.attach(this);
 			this.ship = new Ship(this.width / 2, this.height - 30, Color.RED); // add by team HUD
@@ -575,7 +584,7 @@ public class GameScreen extends Screen {
 				drawManager.drawWave(this, waveCounter, countdown);
 			} else {
 				drawManager.drawCountDown(this, this.level, countdown,
-				this.bonusLife);
+				this.bonusLife, this.gameSettings);
 			}
 
 			drawManager.drawHorizontalLine(this, this.height / 2 - this.height
@@ -704,7 +713,7 @@ public class GameScreen extends Screen {
 								&& checkCollision(bullet, bossParts)) {
 							int CntAndPnt[] = this.bossFormation.destroy(bossParts, false);    // team Inventory
 							this.shipsDestroyed += CntAndPnt[0];
-							int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
+							int feverScore = bossParts.getPointValue(); //TEAM CLOVE //Edited by team Enemy
 
 							if(bossParts.getHp() <= 0) {
 								//inventory_f fever time is activated, the score is doubled.
@@ -712,10 +721,10 @@ public class GameScreen extends Screen {
 									feverScore = feverScore * 10;
 								}
 								this.shipsDestroyed++;
-							}
 
-							this.scoreManager.addScore(feverScore); //clove
-							this.score += CntAndPnt[1];
+								this.scoreManager.addScore(feverScore); //clove
+								this.score += CntAndPnt[1];
+							}
 
 							// CtrlS - If collision occur then check the bullet can process
 							if (!processedFireBullet.contains(bullet.getFire_id())) {
