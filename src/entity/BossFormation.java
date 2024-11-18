@@ -18,7 +18,7 @@ import engine.GameSettings;
 import Enemy.*;
 import entity.BossParts;
 import clove.ScoreManager;
-
+import entity.BossVariety;
 import static java.lang.Math.random;
 
 /**
@@ -34,7 +34,7 @@ public class BossFormation implements Iterable<BossParts> {
     /** Initial position in the y-axis. */
     private static final int INIT_POS_Y = 100;
     /** Distance between ships. */
-    private static final int SEPARATION_DISTANCE = 24;
+    private final int separationDistance;
     /** Proportion of C-type ships. */
     private static final double PROPORTION_C = 0.2;
     /** Proportion of B-type ships. */
@@ -134,12 +134,17 @@ public class BossFormation implements Iterable<BossParts> {
      * @param gameSettings
      *            Current game settings.
      */
-    public BossFormation(final GameSettings gameSettings) {
+
+    public BossFormation(final GameSettings gameSettings, BossVariety bossVariety) {
         this.drawManager = Core.getDrawManager();
         this.logger = Core.getLogger();
+
         this.bossPartsFormation = new ArrayList<List<BossParts>>();
+        this.shooters = new ArrayList<BossParts>();
+
         this.currentDirection = Direction.RIGHT;
         this.movementInterval = 0;
+
         this.nShipsWide = gameSettings.getFormationWidth();
         this.nShipsHigh = gameSettings.getFormationHeight();
         this.shootingInterval = gameSettings.getShootingFrecuency();
@@ -147,52 +152,44 @@ public class BossFormation implements Iterable<BossParts> {
                 * SHOOTING_VARIANCE);
         this.baseSpeed = gameSettings.getBaseSpeed();
         this.movementSpeed = this.baseSpeed;
+
         this.positionX = INIT_POS_X;
         this.positionY = INIT_POS_Y;
-        this.shooters = new ArrayList<BossParts>();
-        SpriteType spriteType;
+        this.separationDistance = bossVariety.getSeparationDistance();
 
-        this.logger.info("Initializing Boss formation with (" + positionX + "," + positionY + ")");
+        this.positionX = INIT_POS_X;
+        this.positionY = INIT_POS_Y;
 
-        // Each sub-list is a column on the formation.
+        //Get Boss Settings from BossVariety
+        List<SpriteType> spriteTypes = bossVariety.getSpriteTypes();
+        int healthPerPart = bossVariety.getHealthPerPart();
+
         for (int i = 0; i < nShipsWide; i++) {
-            this.bossPartsFormation.add(new ArrayList<>());
-            switch (gameSettings.getBossType()) {
-                case "Crab":
-                    if (i % 3 == 0) {
-                        spriteType = SpriteType.BossALeft1;
-                    } else if (i % 3 == 1) {
-                        spriteType = SpriteType.BossAMiddle1;
-                    } else {
-                        spriteType = SpriteType.BossARight1;
-                    }
-                    break;
-                case "Turtle":
-                    spriteType = SpriteType.BossB1;
-                    break;
-                default:
-                    // Temp
-                    spriteType = SpriteType.EnemyShipSpecial;
-            }
+            List<BossParts> column = new ArrayList<>();
+            SpriteType spriteType = spriteTypes.get(i % spriteTypes.size());
 
-            BossParts bossParts = new BossParts((SEPARATION_DISTANCE * i) + positionX, positionY, spriteType,5);
-            this.bossPartsFormation.get(i).add(bossParts);
-            if(spriteType != spriteType.BossAMiddle1 && spriteType != spriteType.BossAMiddle2){
-                this.shooters.add(bossParts);
-            }
-            this.shipCount++;
+            BossParts bossPart = new BossParts(positionX + (separationDistance * i), positionY, spriteType, healthPerPart);
+            column.add(bossPart);
+
+            shooters.add(bossPart);
+
+
+            bossPartsFormation.add(column);
+            shipCount++;
         }
 
         this.shipWidth = this.bossPartsFormation.get(0).get(0).getWidth();
         this.shipHeight = this.bossPartsFormation.get(0).get(0).getHeight();
 
-        this.width = (this.nShipsWide - 1) * SEPARATION_DISTANCE
+        this.width = (this.nShipsWide - 1) * separationDistance
                 + this.shipWidth;
-        this.height = (this.nShipsHigh - 1) * SEPARATION_DISTANCE
+        this.height = (this.nShipsHigh - 1) * separationDistance
                 + this.shipHeight;
 
         for (List<BossParts> column : this.bossPartsFormation)
             this.shooters.add(column.get(0));
+
+        logger.info("BossFormation initialized with position (" + positionX + ", " + positionY + ")");
     }
 
     /**

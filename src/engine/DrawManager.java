@@ -20,6 +20,7 @@ import entity.Coin;
 import inventory_develop.Bomb;
 import screen.Screen;
 import entity.Entity;
+import engine.GameSettings;
 
 import level_design.Background;
 
@@ -789,7 +790,7 @@ public class DrawManager {
 	 *            Checks if a bonus life is received.
 	 */
 	public void drawCountDown(final Screen screen, final int level,
-							  final int number, final boolean bonusLife) {
+							  final int number, final boolean bonusLife, final GameSettings gameSettings) {
 		int rectWidth = screen.getWidth();
 		int rectHeight = screen.getHeight() / 6;
 		backBufferGraphics.setColor(Color.BLACK);
@@ -798,7 +799,7 @@ public class DrawManager {
 		backBufferGraphics.setColor(Color.GREEN);
 		if (number >= 4)
 			// Adjust the numbers here to match the appropriate boss levels.
-			if (level == 3) { // Edited by team Enemy // ex) (level == 3 || level == 6 || level == 9)
+			if (gameSettings.isBossLevel()) { // Edited by team Enemy // ex) (level == 3 || level == 6 || level == 9)
 				drawCenteredBigString(screen, "BOSS",
 						screen.getHeight() / 2 + fontBigMetrics.getHeight() / 3);
 			} else if (!bonusLife) {
