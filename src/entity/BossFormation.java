@@ -16,9 +16,8 @@ import engine.DrawManager;
 import engine.DrawManager.SpriteType;
 import engine.GameSettings;
 import Enemy.*;
-import entity.BossParts;
 import clove.ScoreManager;
-import entity.BossVariety;
+
 import static java.lang.Math.random;
 
 /**
@@ -108,8 +107,6 @@ public class BossFormation implements Iterable<BossParts> {
     private int shipCount;
     private static SoundManager sm;
 
-    private boolean isShell;
-
     /** Directions the formation can move. */
     private enum Direction {
         /** Movement to the right side of the screen. */
@@ -147,8 +144,8 @@ public class BossFormation implements Iterable<BossParts> {
 
         this.nShipsWide = gameSettings.getFormationWidth();
         this.nShipsHigh = gameSettings.getFormationHeight();
-        this.shootingInterval = gameSettings.getShootingFrecuency();
-        this.shootingVariance = (int) (gameSettings.getShootingFrecuency()
+        this.shootingInterval = gameSettings.getShootingFrequency();
+        this.shootingVariance = (int) (gameSettings.getShootingFrequency()
                 * SHOOTING_VARIANCE);
         this.baseSpeed = gameSettings.getBaseSpeed();
         this.movementSpeed = this.baseSpeed;

@@ -718,7 +718,7 @@ public class GameScreen extends Screen {
 							else {
 								int CntAndPnt[] = this.bossFormation.destroy(bossParts, false);    // team Inventory
 								this.shipsDestroyed += CntAndPnt[0];
-								int feverScore = CntAndPnt[0]; //TEAM CLOVE //Edited by team Enemy
+								int feverScore = bossParts.getPointValue();
 
 								if (bossParts.getHp() <= 0) {
 									//inventory_f fever time is activated, the score is doubled.
