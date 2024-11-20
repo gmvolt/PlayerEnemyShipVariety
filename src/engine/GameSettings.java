@@ -52,7 +52,7 @@ public class GameSettings {
     }
 
 	/**
-	 * @return bossType is not null
+	 * @return isBossLevel
 	 */
 	public final boolean isBossLevel() {
 		return isBossLevel;
