@@ -35,7 +35,7 @@ public class GameSettings {
 	 *            Frecuency of enemy shootings, +/- 30%.
 	 * @param wavesNumber
 	 * 				Number of waves in the level (Added by the Level Design team)
-	 * @param bossType
+	 * @param isBossLevel
 	 * 				Indicates if this level is a boss level.
 	 */
 	public GameSettings(final int formationWidth, final int formationHeight,
@@ -48,7 +48,7 @@ public class GameSettings {
 		/** Added by the Level Design team **/
 		this.wavesNumber = wavesNumber;
 
-		this.isBossLevel;
+		this.isBossLevel = isBossLevel;
     }
 
 	/**
