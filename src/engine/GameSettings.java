@@ -20,7 +20,7 @@ public class GameSettings {
 	 * Number of enemy ships waves during the level **/
 	private int wavesNumber;
 	/** Flag to indicate boss level */
-	private isBossLevel;
+	private boolean isBossLevel;
 
 	/**
 	 * Constructor.
