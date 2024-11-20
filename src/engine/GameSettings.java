@@ -20,7 +20,7 @@ public class GameSettings {
 	 * Number of enemy ships waves during the level **/
 	private int wavesNumber;
 	/** Flag to indicate boss level */
-	private String bossType;
+	private isBossLevel;
 
 	/**
 	 * Constructor.
@@ -39,7 +39,7 @@ public class GameSettings {
 	 * 				Indicates if this level is a boss level.
 	 */
 	public GameSettings(final int formationWidth, final int formationHeight,
-                        final int baseSpeed, final int shootingFrecuency, final int wavesNumber, final String bossType) {
+                        final int baseSpeed, final int shootingFrecuency, final int wavesNumber, final boolean isBossLevel) {
 		this.formationWidth = formationWidth;
 		this.formationHeight = formationHeight;
 		this.baseSpeed = baseSpeed;
@@ -48,14 +48,14 @@ public class GameSettings {
 		/** Added by the Level Design team **/
 		this.wavesNumber = wavesNumber;
 
-		this.bossType = bossType;
+		this.isBossLevel;
     }
 
 	/**
 	 * @return bossType is not null
 	 */
 	public final boolean isBossLevel() {
-		return bossType != null;
+		return isBossLevel;
 	}
 
 	/**
