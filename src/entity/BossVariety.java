@@ -33,17 +33,17 @@ public class BossVariety {
     static {
         bossVarieties.put("Crab", new BossVariety(
                 "Crab",
-                List.of(SpriteType.BossALeft1, SpriteType.BossAMiddle1, SpriteType.BossARight1), 5, 24));
+                List.of(SpriteType.BossALeft1, SpriteType.BossACore1, SpriteType.BossARight1), 5, 24));
 
         bossVarieties.put("Turtle", new BossVariety(
                 "Turtle",
-                List.of(SpriteType.BossB1),8, 50)
+                List.of(SpriteType.BossBCore1),8, 50)
                 );
 
 
         bossVarieties.put("DefaultBoss", new BossVariety(
                 "DefaultBoss",
-                List.of(SpriteType.BossALeft1, SpriteType.BossAMiddle1, SpriteType.BossARight1),5,24));
+                List.of(SpriteType.BossALeft1, SpriteType.BossACore1, SpriteType.BossARight1),5,24));
     }
 
     /**

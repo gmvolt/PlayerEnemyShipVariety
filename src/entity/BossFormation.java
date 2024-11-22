@@ -382,8 +382,8 @@ public class BossFormation implements Iterable<BossParts> {
         int count = 0;	// number of destroyed enemy
         int point = 0;  // point of destroyed enemy
 
-        boolean destroyAll = (destroyedShip.spriteType.equals(SpriteType.BossAMiddle1) && destroyedShip.getColor() == Color.red) ||
-                (destroyedShip.spriteType.equals(SpriteType.BossAMiddle2) && destroyedShip.getColor() == Color.red);
+        boolean destroyAll = (destroyedShip.spriteType.equals(SpriteType.BossACore1) && destroyedShip.getColor() == Color.red) ||
+                (destroyedShip.spriteType.equals(SpriteType.BossACore2) && destroyedShip.getColor() == Color.red);
 
         if (isChainExploded
                 && !destroyedShip.spriteType.equals(SpriteType.ExplosiveEnemyShip1)
@@ -405,8 +405,8 @@ public class BossFormation implements Iterable<BossParts> {
                 }
 
         // Updates the list of ships that can shoot the player.
-        if ((this.shooters.contains(destroyedShip) && !destroyedShip.spriteType.equals(SpriteType.BossAMiddle1)) ||
-                (this.shooters.contains(destroyedShip) && !destroyedShip.spriteType.equals(SpriteType.BossAMiddle2))) {
+        if ((this.shooters.contains(destroyedShip) && !destroyedShip.spriteType.equals(SpriteType.BossACore1)) ||
+                (this.shooters.contains(destroyedShip) && !destroyedShip.spriteType.equals(SpriteType.BossACore2))) {
             this.shooters.remove(destroyedShip);
             this.logger.info("Removed destroyed Arm from Boss.");
         }
