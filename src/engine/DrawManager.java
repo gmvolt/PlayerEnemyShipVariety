@@ -121,15 +121,15 @@ public class DrawManager {
         ItemSpeedUp, ItemSpeedSlow, Obstacle,
 
 		BossALeft1,
-		BossAMiddle1,
+		BossACore1,
 		BossARight1,
 		BossALeft2,
-		BossAMiddle2,
+		BossACore2,
 		BossARight2,
 
-		BossB1,
-		BossB2,
-		BossB3
+		BossBCore1,
+		BossBCore2,
+		BossBCore3
 
 	};
 
@@ -179,15 +179,15 @@ public class DrawManager {
 
 			// Crab
 			spriteMap.put(SpriteType.BossALeft1, new boolean[12][24]);
-			spriteMap.put(SpriteType.BossAMiddle1, new boolean[12][24]);
+			spriteMap.put(SpriteType.BossACore1, new boolean[12][24]);
 			spriteMap.put(SpriteType.BossARight1, new boolean[12][24]);
 			spriteMap.put(SpriteType.BossALeft2, new boolean[12][24]);
-			spriteMap.put(SpriteType.BossAMiddle2, new boolean[12][24]);
+			spriteMap.put(SpriteType.BossACore2, new boolean[12][24]);
 			spriteMap.put(SpriteType.BossARight2, new boolean[12][24]);
 			// Turtle
-			spriteMap.put(SpriteType.BossB1, new boolean[30][36]);
-			spriteMap.put(SpriteType.BossB2, new boolean[30][36]);
-			spriteMap.put(SpriteType.BossB3, new boolean[30][36]);
+			spriteMap.put(SpriteType.BossBCore1, new boolean[30][36]);
+			spriteMap.put(SpriteType.BossBCore2, new boolean[30][36]);
+			spriteMap.put(SpriteType.BossBCore3, new boolean[30][36]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");

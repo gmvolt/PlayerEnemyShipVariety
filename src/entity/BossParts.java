@@ -89,11 +89,11 @@ public class BossParts extends Entity {
 			this.animationCooldown.reset();
 
 			switch (this.spriteType) {
-				case BossAMiddle1:
-					this.spriteType = SpriteType.BossAMiddle2;
+				case BossACore1:
+					this.spriteType = SpriteType.BossACore2;
 					break;
-				case BossAMiddle2:
-					this.spriteType = SpriteType.BossAMiddle1;
+				case BossACore2:
+					this.spriteType = SpriteType.BossACore1;
 					break;
 				case BossALeft1:
 					this.spriteType = SpriteType.BossALeft2;
@@ -107,25 +107,25 @@ public class BossParts extends Entity {
 				case BossARight2:
 					this.spriteType = SpriteType.BossARight1;
 					break;
-				case BossB1:
+				case BossBCore1:
 					// Check skill cooldown and change sprite type to B3 which is B3.
 					if (this.bossBActiveSkillCooldown.checkFinished()) {
-						this.spriteType = SpriteType.BossB3;
+						this.spriteType = SpriteType.BossBCore3;
 						bossBDeActiveSkillCooldown.reset();
 					}
 					else
-						this.spriteType = SpriteType.BossB2;
+						this.spriteType = SpriteType.BossBCore2;
 					break;
-				case BossB2:
-					this.spriteType = SpriteType.BossB1;
+				case BossBCore2:
+					this.spriteType = SpriteType.BossBCore1;
 					break;
-				case BossB3:
+				case BossBCore3:
 					if (this.bossBDeActiveSkillCooldown.checkFinished()) {
-						this.spriteType = SpriteType.BossB1;
+						this.spriteType = SpriteType.BossBCore1;
 						bossBActiveSkillCooldown.reset();
 					}
 					else
-						this.spriteType = SpriteType.BossB3;
+						this.spriteType = SpriteType.BossBCore3;
 				default:
 					break;
 			}
@@ -171,23 +171,14 @@ public class BossParts extends Entity {
 	public final void destroy() {
 		this.isDestroyed = true;
 		sm = SoundManager.getInstance();
-		switch (this.spriteType) {
-			case BossAMiddle1:
-			case BossAMiddle2:
-				sm.playES("boss_die");  // 보스 중앙 파괴
-				break;
-			case BossALeft1:
-			case BossALeft2:
-			case BossARight1:
-			case BossARight2:
-				sm.playES("boss_part_destroy");  // 보스 사이드 파괴
-				break;
-			case BossB1:
-			case BossB2:
-				sm.playES("boss_die");
-			default:
-				sm.playES("special_enemy_die");
-				break;
+		if(this.spriteType.toString().contains("Core")){
+			sm.playES("boss_die");
+		}
+		else if(this.spriteType.toString().contains("Boss")){
+			sm.playES("boss_part_destroy");
+		}
+		else {
+			sm.playES("special_enemy_die");
 		}
 
 		this.spriteType = SpriteType.Explosion;
