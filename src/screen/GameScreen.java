@@ -712,7 +712,7 @@ public class GameScreen extends Screen {
 					for (BossParts bossParts : this.bossFormation) {
 						if (!bossParts.isDestroyed()
 								&& checkCollision(bullet, bossParts)) {
-							if (bossParts.getSpriteType().equals(DrawManager.SpriteType.BossB3)) {
+							if (bossParts.getSpriteType().equals(DrawManager.SpriteType.BossBCore3)) {
 								isShell = true;
 							}
 							else {
@@ -725,10 +725,10 @@ public class GameScreen extends Screen {
 									if (feverTimeItem.isActive()) {
 										feverScore = feverScore * 10;
 									}
+									this.scoreManager.addScore(feverScore); //clove
+									this.score += CntAndPnt[1];
 									this.shipsDestroyed++;
 								}
-								this.scoreManager.addScore(feverScore); //clove
-								this.score += CntAndPnt[1];
 							}
 
 							// CtrlS - If collision occur then check the bullet can process
