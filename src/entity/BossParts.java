@@ -14,6 +14,7 @@ import java.awt.*;
 public class BossParts extends Entity {
 	/** Part of the Boss' health point */
 	private int hp;
+	private int maxHp;
 
 	/** Cooldown between sprite changes. */
 	private Cooldown animationCooldown;
@@ -45,9 +46,10 @@ public class BossParts extends Entity {
 	public BossParts(final int positionX, final int positionY,
 					 final SpriteType spriteType, int hp) {
 
-		super(positionX, positionY, 12 * 2, 24 * 2, determineColor(hp));
+		super(positionX, positionY, 12 * 2, 24 * 2, determineColor(hp, hp));
 
 		this.hp = hp;
+		this.maxHp = hp;
 		this.spriteType = spriteType;
 		this.animationCooldown = Core.getCooldown(500);
 		this.bossBActiveSkillCooldown = Core.getVariableCooldown(15000,10000);
@@ -138,13 +140,33 @@ public class BossParts extends Entity {
 	 * 			The Boss' hp
 	 * @return color of Boss
 	 */
-	public static Color determineColor(int hp) {
-		if(hp <= 1) return Color.red;
-		else if(hp <= 5) return Color.green;
-		else if (hp <= 8) return Color.blue;
-		else return Color.white;
-	}
+	public static Color determineColor(int hp, int maxHp) {
 
+		if (hp <= 0) return Color.WHITE;
+
+		hp--;
+		maxHp--;
+
+		int red = 0, green = 0, blue = 0;
+		double ratio = (double) hp * 4 / maxHp;
+
+		if (hp >= (double) maxHp / 2) {
+			blue = (int) (127 * (ratio - 2));
+			green = 255 - (int) (127 * ((ratio - 2)));
+		}else if (hp >= (double) maxHp / 4) {
+			green = 255;
+			red = 255 -(int) (255 * (ratio -1));
+		}else {
+			green = (int) (255 * ratio);
+			red = 255;
+		}
+
+		red = Math.min(255, Math.max(0, red));
+		green = Math.min(255, Math.max(0, green));
+		blue = Math.min(255, Math.max(0, blue));
+
+		return new Color(red, green, blue);
+	}
 	public final void changeColor() {
 	}
 
@@ -162,7 +184,7 @@ public class BossParts extends Entity {
 			sm.playES("hit_enemy");
 		}
 
-		bossParts.setColor(determineColor(hp));
+		bossParts.setColor(determineColor(hp, bossParts.maxHp));
 	}
 
 	/**
