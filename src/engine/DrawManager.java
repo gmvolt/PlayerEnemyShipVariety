@@ -176,13 +176,15 @@ public class DrawManager {
 			spriteMap.put(SpriteType.ItemPierce, new boolean[7][7]);
 			spriteMap.put(SpriteType.ItemSpeedUp, new boolean[9][9]);
 			spriteMap.put(SpriteType.ItemSpeedSlow, new boolean[9][9]);
-			// by Enemy team+
+
+			// Crab
 			spriteMap.put(SpriteType.BossALeft1, new boolean[12][24]);
 			spriteMap.put(SpriteType.BossACore1, new boolean[12][24]);
 			spriteMap.put(SpriteType.BossARight1, new boolean[12][24]);
 			spriteMap.put(SpriteType.BossALeft2, new boolean[12][24]);
 			spriteMap.put(SpriteType.BossACore2, new boolean[12][24]);
 			spriteMap.put(SpriteType.BossARight2, new boolean[12][24]);
+			// Turtle
 			spriteMap.put(SpriteType.BossBCore1, new boolean[30][36]);
 			spriteMap.put(SpriteType.BossBCore2, new boolean[30][36]);
 			spriteMap.put(SpriteType.BossBCore3, new boolean[30][36]);

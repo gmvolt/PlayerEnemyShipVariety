@@ -18,6 +18,8 @@ public class BossParts extends Entity {
 	/** Cooldown between sprite changes. */
 	private Cooldown animationCooldown;
 	/** Checks if the part of the Boss has been hit by a bullet. */
+	private Cooldown bossBActiveSkillCooldown;
+	private Cooldown bossBDeActiveSkillCooldown;
 	private boolean isDestroyed;
 	/** Values of the part of the Boss, in points, when destroyed. */
 	private int pointValue;
@@ -48,6 +50,8 @@ public class BossParts extends Entity {
 		this.hp = hp;
 		this.spriteType = spriteType;
 		this.animationCooldown = Core.getCooldown(500);
+		this.bossBActiveSkillCooldown = Core.getVariableCooldown(15000,10000);
+		this.bossBDeActiveSkillCooldown = Core.getCooldown(4000);
 		this.isDestroyed = false;
 		this.speedMultiplier = 1.0; // default 1.0
 		this.defaultSpeedMultiplier = 1.0;
@@ -104,11 +108,24 @@ public class BossParts extends Entity {
 					this.spriteType = SpriteType.BossARight1;
 					break;
 				case BossBCore1:
-					this.spriteType = SpriteType.BossBCore2;
+					// Check skill cooldown and change sprite type to B3 which is B3.
+					if (this.bossBActiveSkillCooldown.checkFinished()) {
+						this.spriteType = SpriteType.BossBCore3;
+						bossBDeActiveSkillCooldown.reset();
+					}
+					else
+						this.spriteType = SpriteType.BossBCore2;
 					break;
 				case BossBCore2:
 					this.spriteType = SpriteType.BossBCore1;
 					break;
+				case BossBCore3:
+					if (this.bossBDeActiveSkillCooldown.checkFinished()) {
+						this.spriteType = SpriteType.BossBCore1;
+						bossBActiveSkillCooldown.reset();
+					}
+					else
+						this.spriteType = SpriteType.BossBCore3;
 				default:
 					break;
 			}

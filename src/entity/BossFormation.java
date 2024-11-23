@@ -16,9 +16,8 @@ import engine.DrawManager;
 import engine.DrawManager.SpriteType;
 import engine.GameSettings;
 import Enemy.*;
-import entity.BossParts;
 import clove.ScoreManager;
-import entity.BossVariety;
+
 import static java.lang.Math.random;
 
 /**
@@ -145,8 +144,8 @@ public class BossFormation implements Iterable<BossParts> {
 
         this.nShipsWide = gameSettings.getFormationWidth();
         this.nShipsHigh = gameSettings.getFormationHeight();
-        this.shootingInterval = gameSettings.getShootingFrecuency();
-        this.shootingVariance = (int) (gameSettings.getShootingFrecuency()
+        this.shootingInterval = gameSettings.getShootingFrequency();
+        this.shootingVariance = (int) (gameSettings.getShootingFrequency()
                 * SHOOTING_VARIANCE);
         this.baseSpeed = gameSettings.getBaseSpeed();
         this.movementSpeed = this.baseSpeed;
@@ -442,5 +441,25 @@ public class BossFormation implements Iterable<BossParts> {
      */
     public final boolean isEmpty() {
         return this.shipCount <= 0;
+    }
+
+    /**
+     * Reflects player's bullet when boss type is Turtle and get hit.
+     *
+     * @param bullets
+     *         bullet to be reflected. But it is an eyewash.
+     *
+     */
+    public void reflect(final Set<PiercingBullet> bullets) {
+        if (!shooters.isEmpty()) {
+            BossParts shooter = this.shooters.get(this.shooters.size() / 2);
+//                sm = SoundManager.getInstance();
+//                sm.playES("Enemy_Gun_Shot_1_ES");
+            bullets.add(PiercingBulletPool.getPiercingBullet(
+                    shooter.getPositionX() + shooter.width / 2,
+                    shooter.getPositionY(),
+                    BULLET_SPEED,
+                    0));
+        }
     }
 }
