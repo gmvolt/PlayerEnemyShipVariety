@@ -6,11 +6,9 @@ import java.util.*;
 
 import java.io.IOException;
 
-import CtrlS.RoundState;
 import clove.AchievementConditions;
 import clove.Statistics;
 import Enemy.*;
-import HUDTeam.DrawAchievementHud;
 import HUDTeam.DrawManagerImpl;
 import engine.*;
 import entity.*;
@@ -20,9 +18,6 @@ import inventory_develop.*;
 import Sound_Operator.SoundManager;
 import clove.ScoreManager;    // CLOVE
 import twoplayermode.TwoPlayerMode;
-import engine.DrawManager.SpriteType;
-
-import javax.imageio.ImageIO;
 
 
 /**
@@ -712,7 +707,7 @@ public class GameScreen extends Screen {
 					for (BossParts bossParts : this.bossFormation) {
 						if (!bossParts.isDestroyed()
 								&& checkCollision(bullet, bossParts)) {
-							if (bossParts.getSpriteType().equals(DrawManager.SpriteType.BossBCore3)) {
+							if (bossParts.getSpriteType().equals(DrawManager.SpriteType.BossBCoreDamaged)) {
 								isShell = true;
 							}
 							else {

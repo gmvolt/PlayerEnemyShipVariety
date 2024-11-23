@@ -20,7 +20,6 @@ import entity.Coin;
 import inventory_develop.Bomb;
 import screen.Screen;
 import entity.Entity;
-import engine.GameSettings;
 
 import level_design.Background;
 
@@ -129,7 +128,7 @@ public class DrawManager {
 
 		BossBCore1,
 		BossBCore2,
-		BossBCore3
+		BossBCoreDamaged
 
 	};
 
@@ -187,7 +186,7 @@ public class DrawManager {
 			// Turtle
 			spriteMap.put(SpriteType.BossBCore1, new boolean[30][36]);
 			spriteMap.put(SpriteType.BossBCore2, new boolean[30][36]);
-			spriteMap.put(SpriteType.BossBCore3, new boolean[30][36]);
+			spriteMap.put(SpriteType.BossBCoreDamaged, new boolean[30][36]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
