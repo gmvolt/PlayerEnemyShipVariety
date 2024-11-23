@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import javax.swing.Timer;
 
@@ -24,7 +23,7 @@ import engine.GameSettings;
 import static java.lang.Math.*;
 import Enemy.PiercingBulletPool;
 //Sound_Operator
-import Sound_Operator.SoundManager;
+
 
 /**
  * Groups enemy ships into a formation that moves together.
@@ -155,8 +154,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.movementInterval = 0;
 		this.nShipsWide = gameSettings.getFormationWidth();
 		this.nShipsHigh = gameSettings.getFormationHeight();
-		this.shootingInterval = gameSettings.getShootingFrecuency();
-		this.shootingVariance = (int) (gameSettings.getShootingFrecuency()
+		this.shootingInterval = gameSettings.getShootingFrequency();
+		this.shootingVariance = (int) (gameSettings.getShootingFrequency()
 				* SHOOTING_VARIANCE);
 		this.baseSpeed = gameSettings.getBaseSpeed();
 		this.movementSpeed = this.baseSpeed;

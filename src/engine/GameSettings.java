@@ -15,7 +15,7 @@ public class GameSettings {
 	/** Speed of the enemies, function of the remaining number. */
 	private int baseSpeed;
 	/** Frequency of enemy shootings, +/- 30%. */
-	private int shootingFrecuency;
+	private int shootingFrequency;
 	/** Level Design team modification
 	 * Number of enemy ships waves during the level **/
 	private int wavesNumber;
@@ -31,27 +31,30 @@ public class GameSettings {
 	 *            Height of the level's enemy formation.
 	 * @param baseSpeed
 	 *            Speed of the enemies.
-	 * @param shootingFrecuency
-	 *            Frecuency of enemy shootings, +/- 30%.
+	 * @param shootingFrequency
+	 *            Frequency of enemy shootings, +/- 30%.
 	 * @param wavesNumber
 	 * 				Number of waves in the level (Added by the Level Design team)
 	 * @param isBossLevel
 	 * 				Indicates if this level is a boss level.
 	 */
 	public GameSettings(final int formationWidth, final int formationHeight,
-                        final int baseSpeed, final int shootingFrecuency, final int wavesNumber, final boolean isBossLevel) {
+                        final int baseSpeed, final int shootingFrequency, final int wavesNumber, final boolean isBossLevel) {
 		this.formationWidth = formationWidth;
 		this.formationHeight = formationHeight;
 		this.baseSpeed = baseSpeed;
-		this.shootingFrecuency = shootingFrecuency;
+		this.shootingFrequency = shootingFrequency;
 
 		/** Added by the Level Design team **/
 		this.wavesNumber = wavesNumber;
 
 		this.isBossLevel = isBossLevel;
     }
-	// Getter for isBossLevel
-	public boolean isBossLevel() {
+
+	/**
+	 * @return isBossLevel
+	 */
+	public final boolean isBossLevel() {
 		return isBossLevel;
 	}
 
@@ -77,10 +80,10 @@ public class GameSettings {
 	}
 
 	/**
-	 * @return the shootingFrecuency
+	 * @return the shootingFrequency
 	 */
-	public final int getShootingFrecuency() {
-		return shootingFrecuency;
+	public final int getShootingFrequency() {
+		return shootingFrequency;
 	}
 
 	/**
