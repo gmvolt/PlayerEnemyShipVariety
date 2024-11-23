@@ -1,12 +1,14 @@
 package entity;
 
-import Enemy.HpEnemyShip;
 import Sound_Operator.SoundManager;
 import engine.Cooldown;
 import engine.Core;
 import engine.DrawManager.SpriteType;
 
 import java.awt.*;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Implements the part of the Boss.
@@ -112,7 +114,7 @@ public class BossParts extends Entity {
 				case BossBCore1:
 					// Check skill cooldown and change sprite type to B3 which is B3.
 					if (this.bossBActiveSkillCooldown.checkFinished()) {
-						this.spriteType = SpriteType.BossBCore3;
+						this.spriteType = SpriteType.BossBCoreDamaged;
 						bossBDeActiveSkillCooldown.reset();
 					}
 					else
@@ -121,13 +123,13 @@ public class BossParts extends Entity {
 				case BossBCore2:
 					this.spriteType = SpriteType.BossBCore1;
 					break;
-				case BossBCore3:
+				case BossBCoreDamaged:
 					if (this.bossBDeActiveSkillCooldown.checkFinished()) {
 						this.spriteType = SpriteType.BossBCore1;
 						bossBActiveSkillCooldown.reset();
 					}
 					else
-						this.spriteType = SpriteType.BossBCore3;
+						this.spriteType = SpriteType.BossBCoreDamaged;
 				default:
 					break;
 			}
@@ -175,13 +177,28 @@ public class BossParts extends Entity {
 		hp -= 1;
 		bossParts.setHp(hp);
 
-		// Maybe we should add blinking effect here when the Boss get hit.
-
 		if (hp <= 0) {
 			bossParts.destroy();
 		}else{
 			sm = SoundManager.getInstance();
 			sm.playES("hit_enemy");
+
+			SpriteType originalSprite = bossParts.getSpriteType();
+			String originalSpriteName = originalSprite.name();
+			String damagedSpriteName = originalSpriteName.replaceAll("\\d+$", "") + "Damaged"; // Search for sprite names that have 'Damaged'
+			try {
+				SpriteType damagedSpriteType = SpriteType.valueOf(damagedSpriteName);
+				bossParts.setSpriteType(damagedSpriteType);
+
+				new Timer().schedule(new TimerTask() {
+					@Override
+					public void run() {
+						bossParts.setSpriteType(originalSprite);
+					}
+				}, 100);
+			} catch (IllegalArgumentException e) {
+				System.err.println("Damaged sprite type not found: " + damagedSpriteName);
+			}
 		}
 
 		bossParts.setColor(determineColor(hp, bossParts.maxHp));
