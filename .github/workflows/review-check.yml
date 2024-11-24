@@ -8,7 +8,7 @@ jobs:
   review-check:
     runs-on: ubuntu-latest
     outputs:
-      review_status: ${{ steps.check.outputs.result }} # 검토 결과를 출력 변수로 설정
+      approved: ${{ steps.check.outputs.approved }} # 승인 여부를 출력 변수로 설정
 
     steps:
       - name: Set up GitHub CLI
@@ -27,13 +27,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # 이벤트 타입에 따라 PR 번호 가져오기
-          if [[ "$GITHUB_EVENT_NAME" == "pull_request_review" ]]; then
-            PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          else
-            echo "지원되지 않는 이벤트 타입입니다: $GITHUB_EVENT_NAME"
-            exit 1
-          fi
+          # PR 번호 가져오기
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           echo "PR 번호: $PR_NUMBER"
 
           # 리뷰 상태 확인
@@ -44,7 +39,7 @@ jobs:
 
           REQUIRED_APPROVALS=2  # 필요한 승인 수
           if [ "$APPROVAL_COUNT" -ge "$REQUIRED_APPROVALS" ]; then
-            echo "::set-output name=result::true"
+            echo "::set-output name=approved::true"
           else
-            echo "::set-output name=result::false"
+            echo "::set-output name=approved::false"
           fi
