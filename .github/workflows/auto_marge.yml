@@ -6,7 +6,7 @@ on:
 
 jobs:
   auto-merge:
-    needs: review-check # review-check 워크플로우의 결과를 의존
+    needs: review-check
     runs-on: ubuntu-latest
 
     steps:
@@ -15,24 +15,24 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq gh
 
-      - name: 코드 체크아웃
-        uses: actions/checkout@v4
-
-      - name: PR 번호 확인
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 디버깅: needs 값 확인
         run: |
-          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          echo "PR 번호: $PR_NUMBER"
-          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "Review Check Output: ${{ needs.review-check.outputs.approved }}"
+          echo "GitHub Event: ${{ github.event_name }}"
+          echo "Pull Request Number: ${{ github.event.pull_request.number }}"
 
       - name: Pull Request 자동 병합
-        if: ${{ needs.review-check.outputs.approved == 'true' }} # 리뷰 상태 확인 결과를 기반으로 병합 여부 결정
+        if: ${{ needs.review-check.outputs.approved == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ env.PR_NUMBER }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
+          echo "병합 조건 충족. PR 병합 진행 중..."
           curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
                -H "Accept: application/vnd.github.v3+json" \
                "https://api.github.com/repos/${{ github.repository }}/pulls/${{ env.PR_NUMBER }}/merge" \
                -d '{"merge_method":"merge"}'
+
+      - name: 조건 미충족
+        if: ${{ needs.review-check.outputs.approved != 'true' }}
+        run: echo "병합 조건 미충족. 작업 종료."
