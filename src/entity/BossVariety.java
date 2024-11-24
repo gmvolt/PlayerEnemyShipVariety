@@ -33,7 +33,7 @@ public class BossVariety {
     static {
         bossVarieties.put("Crab", new BossVariety(
                 "Crab",
-                List.of(SpriteType.BossALeft1, SpriteType.BossACore1, SpriteType.BossARight1), 5, 24));
+                List.of(SpriteType.BossALeft1, SpriteType.BossACore1, SpriteType.BossARight1), 5, 48));
 
         bossVarieties.put("Turtle", new BossVariety(
                 "Turtle",
@@ -43,7 +43,7 @@ public class BossVariety {
 
         bossVarieties.put("DefaultBoss", new BossVariety(
                 "DefaultBoss",
-                List.of(SpriteType.BossALeft1, SpriteType.BossACore1, SpriteType.BossARight1),5,24));
+                List.of(SpriteType.BossALeft1, SpriteType.BossACore1, SpriteType.BossARight1),5,48));
     }
 
     /**
