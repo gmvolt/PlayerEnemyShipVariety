@@ -26,6 +26,7 @@ jobs:
           else
             echo "Condition not met: 1+1 does not equal 2."
             echo "approved=false" >> $GITHUB_ENV
+            exit 1
           fi
 
       - name: Output Result
