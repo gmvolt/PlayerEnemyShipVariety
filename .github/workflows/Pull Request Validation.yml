@@ -57,12 +57,11 @@ jobs:
           
       - name: Validate Condition
         run: |
-          # 간단한 조건: 1+1 == 2 확인
-          if [[ $((env.approved)) -eq 'true' ]]; then
-            echo "Condition met: 1+1 equals 2."
+          if [[ "${{ env.approved }}" == "true" ]]; then
+            echo "Condition met: 모든 리뷰어가 승인했습니다."
             echo "approved=true" >> $GITHUB_ENV
           else
-            echo "Condition not met: 1+1 does not equal 2."
+            echo "Condition not met: 리뷰어 승인 조건 미충족."
             echo "approved=false" >> $GITHUB_ENV
             exit 1
           fi
