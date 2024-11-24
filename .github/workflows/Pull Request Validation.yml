@@ -1,8 +1,8 @@
 name: Pull Request Validation
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted]  # 리뷰가 제출될 때 워크플로우 트리거
 
 jobs:
   validate-condition:
