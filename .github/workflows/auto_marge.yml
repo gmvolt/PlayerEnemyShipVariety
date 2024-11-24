@@ -26,7 +26,7 @@ jobs:
       - name: Validate Pull Request Result
         run: |
           # Pull Request Validation의 결과 확인
-          if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
+          if [[ "${{ github.event.workflow_run.conclusion }}" != "true" ]]; then
             echo "Validation Workflow가 성공하지 않았습니다. 병합을 중단합니다."
             exit 1
           fi
