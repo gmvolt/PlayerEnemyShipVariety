@@ -17,18 +17,6 @@ jobs:
       - name: 코드 체크아웃
         uses: actions/checkout@v4
 
-      - name: Pull Request Validation Result
-        # Pull Request Validation의 결과를 환경 변수로 확인
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Validation 결과가 approved=true인지 확인
-          if [[ "${{ env.approved }}" != "true" ]]; then
-            echo "Pull Request Validation 결과가 조건을 충족하지 못했습니다. 병합 중단."
-            exit 1
-          fi
-          echo "Pull Request Validation 조건 충족."
-
       - name: PR 승인 상태 확인
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -65,17 +53,15 @@ jobs:
             echo "approved=false" >> $GITHUB_ENV
           fi
 
-      - name: Merge the Pull Request
-        if: env.approved == 'true'  # 승인 조건 충족 시 실행
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "PR 병합 진행 중..."
-          curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
-               -H "Accept: application/vnd.github.v3+json" \
-               "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/merge" \
-               -d '{"merge_method":"merge"}'
-
-      - name: 조건 미충족
-        if: env.approved != 'true'  # 승인 조건 미충족 시 실행
-        run: echo "승인 조건 미충족. 병합 중단."
+        - name: 조건 충족 판단
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            if [[ "${approved}" == "true" ]]; then
+              echo "조건 충족: approved=true"
+              echo "approved=true" >> $GITHUB_ENV
+            else
+              echo "조건 미충족: approved=false"
+              echo "approved=false" >> $GITHUB_ENV
+              exit 1
+            fi
