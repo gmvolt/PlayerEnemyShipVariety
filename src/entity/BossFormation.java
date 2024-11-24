@@ -251,11 +251,8 @@ public class BossFormation implements Iterable<BossParts> {
 
         int movementX = 0;
         int movementY = 0;
-        double remainingProportion = (double) this.shipCount
-                / (this.nShipsHigh * this.nShipsWide);
-        this.movementSpeed = (int) (Math.pow(remainingProportion, 2)
-                * this.baseSpeed);
-        this.movementSpeed += MINIMUM_SPEED;
+
+        this.movementSpeed = this.baseSpeed + MINIMUM_SPEED;
 
         movementInterval++;
         if (movementInterval >= this.movementSpeed) {
@@ -408,6 +405,7 @@ public class BossFormation implements Iterable<BossParts> {
     public final int[] destroy(final BossParts destroyedShip, boolean isChainExploded) {
         int count = 0;	// number of destroyed enemy
         int point = 0;  // point of destroyed enemy
+        boolean isCoreDestroyed = destroyedShip.getSpriteType() == SpriteType.BossACore1 || destroyedShip.getSpriteType() == SpriteType.BossACore2;
 
         boolean destroyAll = (destroyedShip.spriteType.equals(SpriteType.BossACore1) && destroyedShip.getColor() == Color.red) ||
                 (destroyedShip.spriteType.equals(SpriteType.BossACore2) && destroyedShip.getColor() == Color.red);
