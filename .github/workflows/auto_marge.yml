@@ -1,4 +1,4 @@
-name: 자동 marge
+name: auto-merge
 
 on:
   pull_request_review:
@@ -6,6 +6,7 @@ on:
 
 jobs:
   auto-merge:
+    needs: review-check # review-check 워크플로우의 결과를 의존
     runs-on: ubuntu-latest
 
     steps:
@@ -14,34 +15,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq gh
 
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
       - name: PR 번호 확인
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [[ "$GITHUB_EVENT_NAME" == "pull_request_review" ]]; then
-            PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          else
-            echo "지원되지 않는 이벤트 타입입니다: $GITHUB_EVENT_NAME"
-            exit 1
-          fi
-          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV  # 환경 변수로 PR 번호 설정
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          echo "PR 번호: $PR_NUMBER"
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
 
-      - name: review_check_result.txt 파일 다운로드
-        uses: actions/download-artifact@v3
-        with:
-          name: review-check-result
-
-      - name: review_check_result.txt 값 확인
-        id: check-result
-        run: |
-          if grep -q "true" review_check_result.txt; then
-            echo "result=true" >> $GITHUB_ENV
-          else
-            echo "result=false" >> $GITHUB_ENV
-          fi
-
-      - name: Pull Request 자동 marge
-        if: ${{ env.result == 'true' }}
+      - name: Pull Request 자동 병합
+        if: ${{ needs.review-check.outputs.approved == 'true' }} # 리뷰 상태 확인 결과를 기반으로 병합 여부 결정
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ env.PR_NUMBER }}
