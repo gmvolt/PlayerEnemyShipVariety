@@ -25,8 +25,22 @@ jobs:
             exit 1
           fi
 
+      - name: review_check_result.txt 파일 다운로드
+        uses: actions/download-artifact@v3
+        with:
+          name: review-check-result
+
+      - name: review_check_result.txt 값 확인
+        id: check-result
+        run: |
+          if grep -q "true" review_check_result.txt; then
+            echo "result=true" >> $GITHUB_ENV
+          else
+            echo "result=false" >> $GITHUB_ENV
+          fi
+
       - name: Pull Request 자동 marge
-        if: env.approved == 'true'
+        if: ${{ env.result == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
