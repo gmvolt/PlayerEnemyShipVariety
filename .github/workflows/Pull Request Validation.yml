@@ -17,10 +17,48 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+
+      - name: PR 승인 상태 확인
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub API 접근을 위한 토큰 설정
+        run: |
+          # PR 번호 가져오기
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          echo "PR 번호: $PR_NUMBER"
+
+          # 요청된 리뷰어 목록 가져오기
+          REQUESTED_REVIEWERS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/requested_reviewers" | jq -r '.users[].login')
+          echo "요청된 리뷰어 목록: $REQUESTED_REVIEWERS"
+
+          # 실제 리뷰 제출 상태 가져오기
+          REVIEWS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews")
+
+          # 리뷰어 리뷰 상태 확인
+          ALL_APPROVED=true
+          for REVIEWER in $REQUESTED_REVIEWERS; do
+            REVIEW_STATE=$(echo "$REVIEWS" | jq -r --arg REVIEWER "$REVIEWER" '[.[] | select(.user.login == $REVIEWER)] | last | .state')
+            echo "$REVIEWER의 마지막 리뷰 상태: $REVIEW_STATE"
+            if [[ "$REVIEW_STATE" != "APPROVED" ]]; then
+              ALL_APPROVED=false
+              break
+            fi
+          done
+
+          if [[ "$ALL_APPROVED" == "true" ]]; then
+            echo "모든 요청 리뷰어가 리뷰를 승인했습니다."
+            echo "approved=true" >> $GITHUB_ENV
+          else
+            echo "모든 요청 리뷰어가 리뷰를 승인하지 않았습니다."
+            echo "approved=false" >> $GITHUB_ENV
+          fi
+
+          
       - name: Validate Condition
         run: |
           # 간단한 조건: 1+1 == 2 확인
-          if [[ $((1 + 1)) -eq 3 ]]; then
+          if [[ $((env.approved)) -eq 'true' ]]; then
             echo "Condition met: 1+1 equals 2."
             echo "approved=true" >> $GITHUB_ENV
           else
