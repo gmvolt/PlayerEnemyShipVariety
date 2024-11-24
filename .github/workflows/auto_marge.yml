@@ -1,8 +1,6 @@
 name: 승인 조건 충족 시 PR 자동 병합
 
 on:
-  pull_request_review:
-    types: [submitted]  # 리뷰가 제출될 때 워크플로우 트리거
 
 jobs:
   auto-merge:
