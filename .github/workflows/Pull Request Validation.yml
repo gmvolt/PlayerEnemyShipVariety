@@ -19,9 +19,14 @@ jobs:
 
       - name: Validate Condition
         run: |
-          # 조건: 기본 값으로 항상 true 반환
-          echo "Condition met: Default True for testing."
-          echo "approved=true" >> $GITHUB_ENV
+          # 간단한 조건: 1+1 == 2 확인
+          if [[ $((1 + 1)) -eq 2 ]]; then
+            echo "Condition met: 1+1 equals 2."
+            echo "approved=true" >> $GITHUB_ENV
+          else
+            echo "Condition not met: 1+1 does not equal 2."
+            echo "approved=false" >> $GITHUB_ENV
+          fi
 
       - name: Output Result
         run: |
