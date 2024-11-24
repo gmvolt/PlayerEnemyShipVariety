@@ -154,6 +154,10 @@ public class BossFormation implements Iterable<BossParts> {
         this.positionY = INIT_POS_Y;
         this.separationDistance = bossVariety.getSeparationDistance();
 
+        int bossWidth = 12 * 2;  // basic width
+        int bossHeight = 24 * 2; // basic heightdfkhfkdjkfdhklfdskdfjklsfdjlkfdsjlksdfkjlsfdkjlsfdlkjsfdjlk
+
+
         this.positionX = INIT_POS_X;
         this.positionY = INIT_POS_Y;
 
@@ -165,7 +169,31 @@ public class BossFormation implements Iterable<BossParts> {
             List<BossParts> column = new ArrayList<>();
             SpriteType spriteType = spriteTypes.get(i % spriteTypes.size());
 
-            BossParts bossPart = new BossParts(positionX + (separationDistance * i), positionY, spriteType, healthPerPart);
+            int BossWidth = 0, BossHeight = 0;
+
+            switch (spriteType) {
+                case BossACore1:
+                case BossACore2:
+                case BossALeft1:
+                case BossALeft2:
+                case BossARight1:
+                case BossARight2:
+                    BossWidth = 24;
+                    BossHeight = 48;
+                    break;
+                case BossBCore1:
+                case BossBCore2:
+                case BossBCoreDamaged:
+                    BossWidth = 150;
+                    BossHeight = 180;
+                    break;
+                default:
+                    BossWidth = 20;
+                    BossHeight = 20;
+                    break;
+            }
+
+            BossParts bossPart = new BossParts(positionX + (separationDistance * i), positionY, BossWidth, BossHeight, spriteType, healthPerPart);
             column.add(bossPart);
 
             shooters.add(bossPart);

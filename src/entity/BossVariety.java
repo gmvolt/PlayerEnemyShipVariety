@@ -13,6 +13,8 @@ public class BossVariety {
     private final List<SpriteType> spriteTypes;
     private final int healthPerPart;
     private final int separationDistance;
+    private int bossWidth;
+    private int bossHeight;
 
     private static final Map<String, BossVariety> bossVarieties = new HashMap<>();
 
@@ -23,12 +25,14 @@ public class BossVariety {
      * @param spriteTypes List of sprite types used for the boss.
      * @param healthPerPart Health value assigned to each boss part.
      */
+
     private BossVariety(String name, List<SpriteType> spriteTypes, int healthPerPart, int separationDistance) {
         this.name = name;
         this.spriteTypes = spriteTypes;
         this.healthPerPart = healthPerPart;
         this.separationDistance = separationDistance;
     }
+
 
     static {
         bossVarieties.put("Crab", new BossVariety(
@@ -45,6 +49,8 @@ public class BossVariety {
                 "DefaultBoss",
                 List.of(SpriteType.BossALeft1, SpriteType.BossACore1, SpriteType.BossARight1),5,48));
     }
+
+
 
     /**
      *
@@ -66,4 +72,5 @@ public class BossVariety {
     public int getHealthPerPart() { return healthPerPart; }
 
     public int getSeparationDistance() { return separationDistance; }
+
 }
