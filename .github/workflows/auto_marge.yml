@@ -1,10 +1,11 @@
 name: Pull Request 자동 병합
 
 on:
-  pull_request_review:
-    types: [submitted]  
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_run:
+    workflows:
+      - 리뷰 체크 및 승인  # review-check.yml 워크플로우 이름
+    types:
+      - completed  # 이전 워크플로우가 완료되었을 때 실행
 
 jobs:
   auto-merge:
