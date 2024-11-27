@@ -7,6 +7,7 @@ on:
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
+    if: github.base_ref != 'master'  # master 브랜치가 아닌 경우에만 워크플로우 실행
 
     steps:
       - name: Set up GitHub CLI
@@ -26,49 +27,72 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub API 접근을 위한 토큰 설정
         run: |
-          # PR 번호 가져오기
-          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          echo "PR 번호: $PR_NUMBER"
+          # 이벤트 타입에 따라 PR 번호 가져오기
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            # pull_request 이벤트의 경우 PR 번호 추출
+            PR_NUMBER=$(jq --raw-output .number "$GITHUB_EVENT_PATH")
+          elif [[ "$GITHUB_EVENT_NAME" == "pull_request_review" ]]; then
+            # pull_request_review 이벤트의 경우 PR 번호 추출
+            PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          else
+            # 지원되지 않는 이벤트 타입에 대해 에러 출력 후 종료
+            echo "지원되지 않는 이벤트 타입입니다: $GITHUB_EVENT_NAME"
+            exit 1
+          fi
+          
+          echo "PR 번호: $PR_NUMBER"  # PR 번호 출력하여 확인
+          
+          # PR 번호가 제대로 가져와지지 않았을 경우 에러 메시지 출력 및 종료
 
-          # 요청된 리뷰어 목록 가져오기
-          REQUESTED_REVIEWERS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/requested_reviewers" | jq -r '.users[].login')
-          echo "요청된 리뷰어 목록: $REQUESTED_REVIEWERS"
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Error: PR 번호를 가져오지 못했습니다."
+            exit 1
+          fi
 
-          # 실제 리뷰 제출 상태 가져오기
+          # 모든 리뷰어 정보 가져오기
+          REVIEWERS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/requested_reviewers" | jq '.reviewers | length')
+
+          echo "리뷰어 수: $REVIEWERS"
+
+          # 리뷰어가 0명일 경우 자동 병합 중단
+          if [ "$REVIEWERS" -eq 0 ]; then
+            echo "리뷰어가 없으므로 자동 병합을 수행하지 않습니다."
+            exit 0
+          fi
+
+          # 승인 상태를 확인하기 위해 모든 리뷰 정보 가져오기
           REVIEWS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews")
+          
+          echo "리뷰 상태 확인: $REVIEWS"  # 리뷰 상태 확인용 출력
+          
+          # 'APPROVED' 상태인 리뷰 개수 계산
+          APPROVAL_COUNT=$(echo "$REVIEWS" | jq '[.[] | select(.state == "APPROVED")] | length')
+          echo "승인된 리뷰어 수: $APPROVAL_COUNT"  # 승인된 리뷰어 수 출력
 
-          # 리뷰어 리뷰 상태 확인
-          ALL_APPROVED=true
-          for REVIEWER in $REQUESTED_REVIEWERS; do
-            REVIEW_STATE=$(echo "$REVIEWS" | jq -r --arg REVIEWER "$REVIEWER" '[.[] | select(.user.login == $REVIEWER)] | last | .state')
-            echo "$REVIEWER의 마지막 리뷰 상태: $REVIEW_STATE"
-            if [[ "$REVIEW_STATE" != "APPROVED" ]]; then
-              ALL_APPROVED=false
-              break
-            fi
-          done
+          # 필요한 승인 수 정의 (예: 2명)
+          REQUIRED_APPROVALS=$REVIEWERS
 
-          if [[ "$ALL_APPROVED" == "true" ]]; then
-            echo "모든 요청 리뷰어가 리뷰를 승인했습니다."
-            echo "approved=true" >> $GITHUB_ENV
+          # 승인 수가 필요한 승인 수 이상일 때 approved=true 설정
+          if [ "$APPROVAL_COUNT" -ge "$REQUIRED_APPROVALS" ]; then
+            echo "All required approvals have been met."  # 모든 승인 조건 충족 메시지
+            echo "approved=true" >> $GITHUB_ENV  # 환경 변수 approved=true 설정
           else
-            echo "모든 요청 리뷰어가 리뷰를 승인하지 않았습니다."
-            echo "approved=false" >> $GITHUB_ENV
+            echo "Not all required approvals have been met."  # 승인 조건 미충족 메시지
+            echo "approved=false" >> $GITHUB_ENV  # 환경 변수 approved=false 설정
           fi
 
       - name: Merge the Pull Request
-        if: env.approved == 'true'  # 승인 조건 충족 시 실행
+        if: env.approved == 'true' && github.base_ref != 'master'  # 승인 조건 충족 및 master 브랜치가 아닐 때만 실행
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub API 접근을 위한 토큰 설정
         run: |
-          echo "PR 병합 진행 중..."
+          # PR 번호를 다시 가져오기 (머지 단계)
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          # GitHub API를 사용해 PR을 자동 머지
           curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
                -H "Accept: application/vnd.github.v3+json" \
-               "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/merge" \
+               "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/merge" \
                -d '{"merge_method":"merge"}'
-
-      - name: 조건 미충족
-        if: env.approved != 'true'  # 승인 조건 미충족 시 실행
-        run: echo "승인 조건 미충족. 병합 중단."
+          # merge_method는 기본 merge 방식으로 설정
