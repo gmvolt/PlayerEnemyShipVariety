@@ -1,5 +1,3 @@
-
-
 name: 무작위 리뷰어 할당
 
 on:
@@ -24,7 +22,7 @@ jobs:
           echo "PR 제목: $PR_TITLE"
           
           # 7명의 조원 GitHub 아이디를 배열에 저장
-          REVIEWERS=("kcyoow" "sheepjun0330" "gmvolt")
+          REVIEWERS=("gmvolt2")
           
           # PR 작성자 아이디 가져오기
           PR_AUTHOR=$(jq --raw-output .pull_request.user.login "$GITHUB_EVENT_PATH")
