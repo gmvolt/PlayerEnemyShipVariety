@@ -39,38 +39,30 @@ jobs:
       
           echo "PR 번호: $PR_NUMBER"
       
-          # 승인 대기자 수 가져오기
-          REQUESTED_REVIEWERS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/requested_reviewers" | jq '.users | length')
-      
-          echo "승인 대기자 수: $REQUESTED_REVIEWERS"
-      
-          # 승인 대기자가 없는 경우 자동 병합 중단
-          if [ "$REQUESTED_REVIEWERS" -eq 0 ]; then
-            echo "리뷰어가 없으므로 자동 병합을 수행하지 않습니다."
-            exit 0
-          fi
-      
           # 리뷰 상태 가져오기
           REVIEWS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews")
       
           echo "리뷰 상태 확인: $REVIEWS"
       
-          # 'APPROVED' 상태의 리뷰어 수 확인 (최신 상태 기준)
-          APPROVAL_COUNT=$(echo "$REVIEWS" | jq '[group_by(.user.login)[] | max_by(.submitted_at) | select(.state == "APPROVED")] | length')
+          # 리뷰어 목록과 각 리뷰어의 최신 리뷰 상태 확인
+          APPROVED_COUNT=$(echo "$REVIEWS" | jq '[group_by(.user.login)[] | max_by(.submitted_at) | select(.state == "APPROVED")] | length')
       
-          echo "승인된 리뷰어 수: $APPROVAL_COUNT"
+          echo "승인된 리뷰어 수: $APPROVED_COUNT"
       
-          # 승인 대기자 수와 승인된 리뷰어 수 비교
-          if [ "$APPROVAL_COUNT" -ge "$REQUESTED_REVIEWERS" ]; then
+          # PR에 실제 요청된 리뷰어 수 확인 (승인 대기자를 기준으로 하지 않음)
+          REVIEWERS_COUNT=$(echo "$REVIEWS" | jq '[group_by(.user.login)[]] | length')
+      
+          echo "전체 리뷰어 수: $REVIEWERS_COUNT"
+      
+          # 필요한 승인 수는 리뷰어 전체 수로 설정
+          if [ "$APPROVED_COUNT" -ge "$REVIEWERS_COUNT" ]; then
             echo "모든 승인 조건을 충족했습니다."
             echo "approved=true" >> $GITHUB_ENV
           else
             echo "승인 조건을 충족하지 못했습니다."
             echo "approved=false" >> $GITHUB_ENV
           fi
-
       - name: Merge the Pull Request
         if: env.approved == 'true' && github.base_ref != 'master'  # 승인 조건 충족 및 master 브랜치가 아닐 때만 실행
         env:
