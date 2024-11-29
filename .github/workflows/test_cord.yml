@@ -34,8 +34,6 @@ jobs:
           chmod +x gradlew  # 실행 권한 추가
           ./gradlew clean test
 
-
-      # 5. 테스트 결과 출력
       - name: 테스트 결과 출력
         run: |
           echo "테스트 완료"
