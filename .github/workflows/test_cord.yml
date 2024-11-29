@@ -23,11 +23,17 @@ jobs:
         run: |
           rm -rf ~/.gradle/caches
 
-      - name: Gradle 빌드 및 테스트 실행
-        working-directory: ./app
+      - name: 디렉터리 구조 확인
         run: |
-          chmod +x gradlew
-          ./gradlew clean test --stacktrace --info
+          pwd
+          ls -la
+
+      - name: Gradle 빌드 및 테스트 실행
+        working-directory: ./app # gradlew가 위치한 디렉터리로 이동
+        run: |
+          chmod +x gradlew  # 실행 권한 추가
+          ./gradlew clean test
+
 
       # 5. 테스트 결과 출력
       - name: 테스트 결과 출력
