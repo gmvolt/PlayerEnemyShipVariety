@@ -29,7 +29,6 @@ jobs:
           ls -la
 
       - name: Gradle 빌드 및 테스트 실행
-        working-directory: ./app # gradlew가 위치한 디렉터리로 이동
         run: |
           chmod +x gradlew  # 실행 권한 추가
           ./gradlew clean test
@@ -37,4 +36,3 @@ jobs:
       - name: 테스트 결과 출력
         run: |
           echo "테스트 완료"
-
