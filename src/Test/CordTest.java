@@ -5,5 +5,6 @@ class CordTest {
 
     @Test
     void destroy() {
+        assertTrue(false);
     }
 }
