@@ -22,7 +22,7 @@ jobs:
       - name: Gradle 캐시 삭제
         run: |
           rm -rf ~/.gradle/caches
-
+          
       - name: 디렉터리 구조 확인
         run: |
           pwd
@@ -32,7 +32,9 @@ jobs:
         run: |
           chmod +x gradlew  # 실행 권한 추가
           ./gradlew clean test
+        continue-on-error: false  # 테스트 실패 시 워크플로우 실패로 설정
 
       - name: 테스트 결과 출력
+        if: ${{ failure() }}  # 실패한 경우에만 실행
         run: |
-          echo "테스트 완료"
+          echo "테스트 실패"
