@@ -1,4 +1,4 @@
-name: Assign Random Reviewers
+name: 리뷰어 랜덤 지정
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y jq gh
-      - name: Select Random Reviewers
+      - name: 리뷰어 랜덤 선택
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
