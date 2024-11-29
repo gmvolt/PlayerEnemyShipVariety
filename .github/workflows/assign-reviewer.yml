@@ -18,7 +18,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # 7명의 조원 GitHub 아이디를 배열에 저장
-          REVIEWERS=("Dream-no24" "depave" "this-yujunkim" "gmvolt" "Jangjimin9766" "HSHyun" "NaJhinY")
+          REVIEWERS=("gmvolt2")
           
           # PR 작성자 아이디 가져오기
           PR_AUTHOR=$(jq --raw-output .pull_request.user.login "$GITHUB_EVENT_PATH")
