@@ -32,7 +32,7 @@ jobs:
           done
           
           # 배열에서 2명을 무작위로 선택
-          SELECTED_REVIEWERS=($(shuf -e "${FILTERED_REVIEWERS[@]}" -n 2))
+          SELECTED_REVIEWERS=($(shuf -e "${FILTERED_REVIEWERS[@]}" -n 1))
           
           echo "선택된 리뷰어: ${SELECTED_REVIEWERS[@]}"
           
