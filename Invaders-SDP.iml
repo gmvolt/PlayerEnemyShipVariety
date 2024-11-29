@@ -8,5 +8,6 @@
     </content>
     <orderEntry type="jdk" jdkName="22" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="scalatestplus.junit.5.11_3" level="project" />
   </component>
 </module>
