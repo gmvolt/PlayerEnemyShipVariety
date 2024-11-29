@@ -2,13 +2,12 @@ name: 리뷰어 랜덤 지정
 
 on:
   workflow_run:
-    workflows:
-      - 테스트 실행 및 빌드  # 상위 워크플로우 이름과 동일해야 함
-    types:
-      - completed
+    workflows: [테스트 실행 및 빌드]
+    types: [completed]
 
 jobs:
   assign-reviewers:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
