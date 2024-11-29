@@ -1,8 +1,11 @@
 name: 리뷰어 랜덤 지정
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_run:
+    workflows:
+      - 테스트 실행 및 빌드  # 상위 워크플로우 이름과 동일해야 함
+    types:
+      - completed
 
 jobs:
   assign-reviewers:
