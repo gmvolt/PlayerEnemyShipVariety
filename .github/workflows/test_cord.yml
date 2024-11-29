@@ -19,17 +19,15 @@ jobs:
           distribution: 'temurin' 
           java-version: '22' 
           
-      - name: Gradle 설치 및 테스트 실행
+      - name: Gradle 캐시 삭제
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gradle
-          gradle clean test
+          rm -rf ~/.gradle/caches
 
-      # 4. Gradle 빌드 및 테스트 실행
       - name: Gradle 빌드 및 테스트 실행
-        working-directory: ./app  # `build.gradle.kts`가 있는 디렉터리로 이동
+        working-directory: ./app
         run: |
-          ./gradlew clean test
+          chmod +x gradlew
+          ./gradlew clean test --stacktrace --info
 
       # 5. 테스트 결과 출력
       - name: 테스트 결과 출력
