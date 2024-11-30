@@ -20,21 +20,17 @@ jobs:
           distribution: 'temurin' 
           java-version: '22' 
 
-      - name: Gradle 캐시 삭제
-        run: |
-          rm -rf ~/.gradle/caches
-          
-      - name: 디렉터리 구조 확인
-        run: |
-          pwd
-          ls -la
+      # Gradle Wrapper 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      - name: Gradle 빌드 및 테스트 실행
-        run: |
-          chmod +x gradlew  # 실행 권한 추가
-          ./gradlew clean test || exit 1
+        # Gradle Test를 실행한다
+      - name: Test with Gradle
+        run: ./gradlew --info test
 
-      - name: 테스트 결과 출력
-        if: ${{ failure() }}  # 실패한 경우에만 실행
-        run: |
-          echo "테스트 실패: 자세한 내용을 확인하세요."
+        # Test 후 Report 생성
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: '**/build/test-results/test/TEST-*.xml'
