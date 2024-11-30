@@ -36,32 +36,16 @@ application {
     // Define the main class for the application.
     mainClass = "org.example.App"
 }
+
 sourceSets {
     test {
         java {
-            setSrcDirs(listOf("src/Test"))
+            setSrcDirs(listOf("src/Test")) 
         }
     }
 }
 
 tasks.named<Test>("test") {
+    // Use JUnit Platform for unit tests.
     useJUnitPlatform()
-
-    // 테스트 실패 시 즉시 중단하도록 설정
-    failFast = true
-
-    // 테스트 리포트를 항상 생성
-    reports {
-        junitXml.required.set(true) // XML 보고서 생성
-        html.required.set(true)    // HTML 보고서 생성
-    }
-
-    // 테스트 결과를 콘솔에 출력
-    testLogging {
-        events("passed", "skipped", "failed") // 모든 테스트 상태 출력
-        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-        showExceptions = true
-        showStackTraces = true
-        showCauses = true
-    }
 }
