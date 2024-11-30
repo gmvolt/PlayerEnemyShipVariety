@@ -22,6 +22,12 @@ jobs:
           PR_TITLE=$(jq --raw-output .pull_request.title "$GITHUB_EVENT_PATH")
           echo "PR 제목: $PR_TITLE"
           
+          # 디스코드 웹훅 URL 확인
+          if [[ -z "$WEBHOOK_URL" ]]; then
+            echo "ERROR: DISCORD_WEBHOOK URL이 설정되지 않았습니다."
+            exit 1
+          fi
+          
           # 2명의 조원 GitHub 아이디를 배열에 저장
           REVIEWERS=("gmvolt" "gmvolt2")
           
