@@ -39,7 +39,7 @@ jobs:
 
       - name: Call Assign Reviewers Workflow
         if: ${{ success() }} # 테스트가 성공했을 때만 실행
-        uses: ./${{ github.head_ref }}/.github/workflows/assign-reviewer.yml
+        uses: .github/workflows/assign-reviewer.yml@${{ github.head_ref }}
         with:
           pr_title: ${{ github.event.pull_request.title }}
           pr_author: ${{ github.event.pull_request.user.login }}
