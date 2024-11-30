@@ -20,22 +20,22 @@ jobs:
           distribution: 'temurin' 
           java-version: '22' 
 
-      - name: Gradle 명령 실행을 위한 권한을 부여합니다
+      - name: Grant execute permissions for Gradle
         run: chmod +x gradlew
 
-      - name: Gradle build를 수행합니다
+      - name: Run Gradle build
         run: ./gradlew build
 
-      - name: 테스트 결과를 PR에 코멘트로 등록합니다
-        uses: EnricoMi/publish-unit-test-result-action@v1
+      - name: Publish test results to PR comments
+        uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: '**/build/test-results/test/TEST-*.xml'
 
-      - name: 테스트 실패 시, 실패한 코드 라인에 Check 코멘트를 등록합니다
+      - name: Add comments to failed lines on PR
         uses: mikepenz/action-junit-report@v3
         if: always()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
-          token: ${{ github.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
