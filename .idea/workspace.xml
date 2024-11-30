@@ -5,17 +5,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c2d1df9e-7633-4932-824c-2c1f0ea58909" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/res/sound" beforeDir="false" afterPath="$PROJECT_DIR$/res/sound" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/org/example/App.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/test/java/org/example/AppTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Test/CordTest1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Test/CordTest1.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Test/CordTest2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Test/CordTest2.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -44,8 +63,17 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Core.executor": "Run",
+    "Downloaded.Files.Path.Enabled": "false",
+    "JUnit.CordTest.executor": "Run",
+    "JUnit.CordTest1.executor": "Run",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "asdf",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "create.test.in.the.same.root": "true",
+    "git-widget-placeholder": "asdasadadd",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/OSYSTUDY/241018/Invaders-SDP_TEAMstarter",
     "node.js.detected.package.eslint": "true",
@@ -56,6 +84,7 @@
     "project.structure.last.edited": "모듈",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.28390804",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
     "vue.rearranger.settings.migration": "true",
     "애플리케이션.Core.executor": "Run"
   }
@@ -64,8 +93,17 @@
     <key name="CreateClassDialog.RecentsKey">
       <recent name="clove" />
     </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\gmvolt\Documents\GitHub\test" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="" />
+    </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="JUnit.CordTest1">
     <configuration name="Core" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="22" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -81,6 +119,30 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="CordTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Invaders-SDP" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="CordTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CordTest1" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Invaders-SDP" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="CordTest1" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.CordTest1" />
+        <item itemvalue="JUnit.CordTest" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -118,6 +180,13 @@
       <workItem from="1731429356468" duration="106000" />
       <workItem from="1731429841691" duration="5000" />
       <workItem from="1731432666032" duration="24000" />
+      <workItem from="1732920213867" duration="545000" />
+      <workItem from="1732920783875" duration="51000" />
+      <workItem from="1732924088069" duration="487000" />
+      <workItem from="1732943926747" duration="19000" />
+      <workItem from="1732988779724" duration="248000" />
+      <workItem from="1732989173985" duration="372000" />
+      <workItem from="1732989700911" duration="24000" />
     </task>
     <servers />
   </component>
