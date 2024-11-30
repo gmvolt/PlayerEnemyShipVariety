@@ -5,6 +5,7 @@ on:
     branches: [main, develop, feature/*]
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   run-tests:
     runs-on: ubuntu-latest
@@ -18,7 +19,7 @@ jobs:
         with:
           distribution: 'temurin' 
           java-version: '22' 
-          
+
       - name: Gradle 캐시 삭제
         run: |
           rm -rf ~/.gradle/caches
@@ -31,10 +32,9 @@ jobs:
       - name: Gradle 빌드 및 테스트 실행
         run: |
           chmod +x gradlew  # 실행 권한 추가
-          ./gradlew clean test
-        continue-on-error: false  # 테스트 실패 시 워크플로우 실패로 설정
+          ./gradlew clean test || exit 1
 
       - name: 테스트 결과 출력
         if: ${{ failure() }}  # 실패한 경우에만 실행
         run: |
-          echo "테스트 실패"
+          echo "테스트 실패: 자세한 내용을 확인하세요."
