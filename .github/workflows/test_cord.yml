@@ -1,8 +1,6 @@
 name: 테스트 실행 및 빌드
 
 on:
-  push:
-    branches: [main, develop, feature/*]
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -14,17 +12,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 22
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin' 
-          java-version: '22' 
+          distribution: 'temurin'
+          java-version: '22'
 
       - name: Grant execute permissions for Gradle
         run: chmod +x gradlew
 
       - name: Run Gradle build
-        run: ./gradlew build || true
+        run: ./gradlew build
 
       - name: Publish test results to PR comments
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -39,3 +37,10 @@ jobs:
           report_paths: '**/build/test-results/test/TEST-*.xml'
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Call Assign Reviewers Workflow
+        if: ${{ success() }} # 테스트가 성공했을 때만 실행
+        uses: ./.github/workflows/assign-reviewer.yml
+        with:
+          pr_title: ${{ github.event.pull_request.title }}
+          pr_author: ${{ github.event.pull_request.user.login }}
+          pr_link: ${{ github.event.pull_request.html_url }}
