@@ -36,6 +36,13 @@ application {
     // Define the main class for the application.
     mainClass = "org.example.App"
 }
+sourceSets {
+    test {
+        java {
+            setSrcDirs(listOf("src/Test"))
+        }
+    }
+}
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
