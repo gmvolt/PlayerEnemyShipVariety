@@ -1,13 +1,16 @@
 name: 무작위 리뷰어 할당
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_run:
+    workflows: ["테스트 실행 및 빌드"] # run-tests 워크플로우 이름
+    types:
+      - completed
 
 jobs:
   assign-reviewers:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} # 성공 시에만 실행
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Set up GitHub CLI
         run: |
