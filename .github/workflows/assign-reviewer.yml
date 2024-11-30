@@ -21,6 +21,10 @@ jobs:
           # PR 제목 가져오기
           PR_TITLE=$(jq --raw-output .pull_request.title "$GITHUB_EVENT_PATH")
           echo "PR 제목: $PR_TITLE"
+
+          # PR 링크 가져오기
+          PR_LINK=$(jq --raw-output .pull_request.html_url "$GITHUB_EVENT_PATH")
+          echo "PR 링크: $PR_LINK"
           
           # 디스코드 웹훅 URL 확인
           if [[ -z "$WEBHOOK_URL" ]]; then
