@@ -74,7 +74,7 @@ jobs:
           for id in "${SELECTED_DISCORD_IDS[@]}"; do
             DISCORD_MENTIONS+="<@$id> "
           done
-          MESSAGE="리뷰어로 지정되었습니다: ${DISCORD_MENTIONS}! PR 제목: $PR_TITLE"
+          MESSAGE="리뷰어로 지정되었습니다: ${DISCORD_MENTIONS}!\nPR 제목: $PR_TITLE\nPR 링크: $PR_LINK"
           
           # 디스코드 웹훅으로 메시지 전송
           curl -H "Content-Type: application/json" \
